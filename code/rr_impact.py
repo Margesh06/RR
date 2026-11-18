@@ -33,7 +33,10 @@ for role, team_col in (("bat", "batting_team_id"), ("bowl", "bowling_team_id")):
     else:
         grp = lambda pid: "spin" if R.pace_spin.get(pid) == "Spin" else "pace"
     rr["slot"] = rr.pid.map(grp)
-    weak = rr[rr.pq_inc < 0]
+    # below par = below the average player on an IPL 2026 pressure ball (ball-weighted), not below zero: with the
+    # ground and opponent adjustment the zero point is the average T20 ball of the whole data set, not the IPL's
+    lg_pq = P[P.comp_name == SEASON].pid.map(R.pq).mean()
+    weak = rr[rr.pq_inc < lg_pq]
     # posterior sd of PQ: per-ball sd of quality / sqrt(pressure balls + prior balls)
     sd_q = r[r.P].q.std()
     C = pd.read_csv(f"{OUT}/consensus_{role}.csv", index_col=0)
@@ -56,7 +59,7 @@ for role, team_col in (("bat", "batting_team_id"), ("bowl", "bowling_team_id")):
                          why=route(c["name"], R.ipl_2026_team[pid])[1],
                          arank=c.get("arank", np.nan)))
     print(role, "win-prob per run by PI band:", k.round(4).to_dict())
-    print(role, "RR 2026 below-par pressure balls by slot:", weak.groupby("slot").size().to_dict())
+    print(role, "IPL 2026 average PQ:", round(lg_pq, 1), "RR 2026 below-par pressure balls by slot:", weak.groupby("slot").size().to_dict())
 res = pd.DataFrame(rows)
 res.to_csv(f"{OUT}/rr_impact.csv", index=False)
 print(res.drop(columns=["pid", "why"]).round(2).to_string(index=False))

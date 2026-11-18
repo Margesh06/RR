@@ -109,6 +109,11 @@ cg_rr = CG[CG.team == "Rajasthan Royals"].iloc[0]
 cg_top = CG.iloc[0]
 imp = pd.read_csv(f"{OUT}/rr_impact.csv").set_index("pid")
 cards = pd.read_csv(f"{OUT}/cards.csv")
+CTX = pd.read_csv(f"{OUT}/context_summary.csv", index_col=0).value      # ground and opponent effect sizes
+ctxc = pd.read_csv(f"{OUT}/ctx_compare.csv")                              # Test 8
+ctxm = pd.read_csv(f"{OUT}/ctx_moves.csv")
+_ro = pd.read_csv(f"{OUT}/reliability_without_context.csv")
+REL_OLD = _ro[_ro.metric == "Pressure Quality (PRI core)"].set_index("role").full_sample_reliability
 tier_s = pd.read_csv(f"{OUT}/tier_check.csv")
 pak = pd.read_csv(f"{OUT}/consensus_bowl_incl_pak.csv", index_col=0)
 pak_bat = pd.read_csv(f"{OUT}/consensus_bat_incl_pak.csv", index_col=0)
@@ -120,6 +125,7 @@ AUC = pd.read_csv(f"{OUT}/rr_auction.csv").set_index("pid")
 # best auction buy per gap; the three gaps use exactly RR's three overseas slots if all are overseas
 free_trio = AUC.loc[[AUC[AUC.slot == s].wins.idxmax() for s in ("middle / finish", "pace", "spin")]]
 n_os = int((free_trio.nation != "India").sum())
+gems_all = pd.read_csv(f"{OUT}/extra_gems.csv")
 LAST_FEE = {"Matheesha Pathirana": "Rs 18 Cr (KKR, 2026 auction)", "Wanindu Hasaranga": "Rs 2 Cr base (LSG, 2026 auction)",
             "Tushar Deshpande": "Rs 6.5 Cr (RR)", "Daryl Mitchell": "unsold in 2026", "Mujeeb Ur Rahman": "unsold in 2026",
             "Maheesh Theekshana": "unsold in 2026", "Mark Adair": "never played IPL"}
@@ -130,6 +136,31 @@ TEAM_ABBR = {"Royal Challengers Bengaluru": "RCB", "Sunrisers Hyderabad": "SRH",
 
 def team(x):
     return TEAM_ABBR.get(x, x)
+
+
+SHORT = {"Rashid Khan": "Rashid", "Krunal Pandya": "Krunal", "Namboori Tilak Varma": "Tilak Varma",
+         "Varun Chakravarthy": "Varun", "Kuldeep Yadav": "Kuldeep"}
+
+
+def short_name(n):
+    return SHORT.get(n, n.split()[-1])
+
+
+def and_list(xs):
+    xs = list(xs)
+    return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
+
+
+def _every(role):
+    """Players top 10 in every specification, as a sentence subject."""
+    n = [short_name(x) for x in cons[role][cons[role].top10_share >= 1].name]
+    return and_list(n) + (" is" if role == "bat" and len(n) == 1 else "")
+
+
+_out_ = ctxm[ctxm.rank_with > 10].sort_values(["role", "rank_without"])
+_in_ = ctxm[ctxm.rank_with <= 10].sort_values(["role", "rank_with"])
+_moves_txt = (and_list([f"{r['name']} ({'batter' if r.role == 'bat' else 'bowler'} #{r.rank_without} to #{r.rank_with})" for _, r in _out_.iterrows()])
+              + " drop out, and " + and_list([f"{r['name']} (#{r.rank_without} to #{r.rank_with})" for _, r in _in_.iterrows()]) + " come in")
 
 
 # ------------------------------------------------------------------ page furniture
@@ -207,13 +238,19 @@ lists.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", 
 S.append(lists)
 S.append(Spacer(1, 4))
 n_lift = {r: int(((bat if r == "bat" else bowl).loc[cons[r].index[:10]].lift > 0).sum()) for r in cons}
-S.append(P(f"Score = consensus PRI: performance on pressure balls vs an average player in the same situations, plus Lift "
-           f"(vs the player's own normal level, runs per 100 balls), consistency across pressure matches and win impact, "
-           f"averaged over {N_SPECS} model specifications (0 = average eligible player). Consist. = share of pressure matches "
-           f"beating expectation (Cons.). {n_lift['bat']} of our batters and {n_lift['bowl']} of our bowlers have positive Lift "
-           "(Sooryavanshi and Pathirana roughly neutral; Abhishek Sharma the one dip). † Dead heat (score gap < 0.01, chained), ordered by share of specifications in the top 10, then pressure matches. "
-           f"<b>Seven batters and seven bowlers here were kept by other IPL teams for 2027 (two more batters are already at RR), "
-           "so RR cannot buy them: page 2 ranks the players RR can buy, with a backup order.</b>", "small"))
+_kept = {r: sum(route(x["name"], x.ipl_2026_team)[0] == "Under contract" for _, x in T.iterrows())
+         for r, T in (("bat", top_bat), ("bowl", top_bowl))}
+_at_rr = sum(route(x["name"], x.ipl_2026_team)[0] == "Already at RR" for T in (top_bat, top_bowl) for _, x in T.iterrows())
+_words = {2: "Two", 3: "Three", 5: "Five", 6: "Six", 7: "Seven", 8: "Eight", 9: "Nine"}
+S.append(P(f"Score = consensus PRI: performance on pressure balls vs an average player in the same situations (same ground, "
+           f"same opponent), plus Lift (vs the player's own normal level, runs per 100 balls), consistency across pressure "
+           f"matches and win impact, averaged over {N_SPECS} model specifications (0 = average eligible player). Cons. = share "
+           f"of pressure matches beating expectation. {n_lift['bat']} of our batters and {n_lift['bowl']} of our bowlers have "
+           "positive Lift (Sooryavanshi and Pathirana roughly neutral; Abhishek Sharma the one dip). † Dead heat (score gap "
+           "< 0.01, chained), ordered by share of specifications in the top 10, then pressure matches. "
+           f"<b>{_words.get(_kept['bat'], _kept['bat'])} batters and {_words.get(_kept['bowl'], _kept['bowl']).lower()} bowlers "
+           f"here were kept by other IPL teams for 2027 ({_words.get(_at_rr, _at_rr).lower()} more batters are already at RR), so RR cannot buy them: page 2 "
+           "ranks the players RR can buy, with a backup order.</b>", "small"))
 S.append(Spacer(1, 6))
 S.append(P("FOUR THINGS RR SHOULD KNOW", "kick"))
 S += bullets([
@@ -221,12 +258,12 @@ S += bullets([
     "win probability on the next ball. Only 18% of deliveries qualify; the other 82% are 'normal' balls, the baseline for "
     "each player's usual level. Even in chase death overs only about a third of balls are high-pressure.",
     f"<b>Raw \"clutch\" stats are mostly noise.</b> Raw pressure win-probability-added has a reliability of only {rel_wpa_b:.2f} for "
-    "batters, so one set of matches barely predicts the next. Our context-adjusted, shrunk Pressure Quality reaches "
-    f"{rel_pq_b:.2f} for batters and {rel_pq_w:.2f} for bowlers, on a par with simple death-over stats while also controlling "
-    "for role and each player's usual level (Section 7).",
+    "batters, so one set of matches barely predicts the next. Our shrunk Pressure Quality, judged against the same "
+    f"situation, ground and opponent, reaches {rel_pq_b:.2f} for batters and {rel_pq_w:.2f} for bowlers, and predicts "
+    "later seasons better than leaving grounds and opponents out (Section 7).",
     f"<b>The lists do not hinge on our assumptions.</b> We re-ran the full pipeline under {N_SPECS} combinations of "
-    "pressure threshold, weights, priors, recency, knockout and opposition settings, and rank on the average. Hazlewood, "
-    "Rashid, Narine, Krunal and Kuldeep are top 10 in every specification; Jaiswal is the only batter who is.",
+    "pressure threshold, weights, priors, recency, knockout and opposition settings, and rank on the average. "
+    + _every("bowl") + " are top 10 in every specification; " + _every("bat") + " the only batter who is.",
     f"<b>RR's gap is the middle order and the bowling under pressure.</b> In the tensest third of games RR won "
     f"{int(cg_rr.close_wins)} of {int(cg_rr.close_games)} in 2025-26 (30%), the lowest win rate of the 10 teams. The best auction buys for those "
     f"gaps ({', '.join(free_trio.name)}) add about <b>{free_trio.wins.round(2).sum():.2f} wins a season</b> (Section 8).",
@@ -297,9 +334,10 @@ S.append(P("<b>Batters</b>", "p"))
 S += top20("bat")
 S.append(P("<b>Bowlers</b>", "p"))
 S += top20("bowl")
-S.append(P(f"Top 10 of pool: Very sure = 90%+ of {N_SPECS} specifications, Sure 60%+, Borderline 30%+, Unlikely below 30%. Without Brook "
-           "(banned), Hendricks and Mitchell are no longer level. Bangladesh players: registered by the BCB, but KKR "
-           "released Mustafizur in Jan 2026 on BCCI instructions, so treat them as a risk.", "small"))
+S.append(P(f"Top 10 of pool: Very sure = 90%+ of {N_SPECS} specifications, Sure 60%+, Borderline 30%+, Unlikely below 30%. Harry "
+           f"Brook (#{crank['bat'][6280]} overall) is not on the board: he is banned from the IPL until the 2028 auction. "
+           "Bangladesh players: registered by the BCB, but KKR released Mustafizur in Jan 2026 on BCCI instructions, so "
+           "treat them as a risk.", "small"))
 S.append(PageBreak())
 
 # ------------------------------------------------------------------ the author's own note (only if written)
@@ -339,8 +377,13 @@ G = [
     ("Pressure Index (PI)", "How tense a ball is. 1 = an average ball; 1.5 or more = a pressure ball; famous last-ball "
      "finishes reach 14 to 28.", "Rinku Singh's five sixes: the first came at 0.5 (game nearly lost), the last at 28."),
     ("Expected", "What an average player would have done in exactly the same situation (same over, score, wickets, "
-     "target). Beating 'expected' is what counts, so openers and finishers are judged fairly.",
-     "Strike rate 182 vs 147 expected = 35 more runs per 100 balls than an average batter in the same spots."),
+     "target), at the same ground and against the same opponent. Beating 'expected' is what counts, so openers and "
+     "finishers, and players from strong and weak teams, are judged fairly.",
+     f"Strike rate {tb.SR_p[6396]:.0f} vs {tb.xSR_p[6396]:.0f} expected = {tb.SR_p[6396] - tb.xSR_p[6396]:.0f} more runs "
+     "per 100 balls than an average batter in the same spots."),
+    ("Ground and opponent", "Some grounds are easier to score at, and facing Bumrah is harder than facing an average "
+     "bowler. Each ball's 'expected' is raised or lowered for both, so nobody gains from a small ground or a weak "
+     "opponent.", f"Facing Bumrah, an average batter is expected to score {-CTX['bumrah']:.0f} fewer runs per 100 balls."),
     ("Score (PRI)", "One number for performance under pressure. It combines four parts: Pressure Quality (beating "
      "expected), Consistency (doing it often), Lift (rising above his own normal level) and Win Impact (changing results).",
      "0 = an average eligible player; +1 or more = elite; below 0 = below average."),
@@ -375,7 +418,7 @@ S.append(table([["The brief asks for", "Where"],
                 ["Batting and bowling metrics, player baselines, scoring logic", "Section 3"],
                 ["Fair comparisons: sample size, eligibility, contexts, IPL and T20I", "Section 4"],
                 ["Evidence for the top 10 and their order", "Sections 5, 6 and 9 (player cards)"],
-                ["Reliability, consistency across matches, limitations", "Section 7 (seven tests)"],
+                ["Reliability, consistency across matches, limitations", "Section 7 (eight tests)"],
                 ["Reproducibility", "Appendix B and the public code"],
                 ["How each player could strengthen the RR squad", "Section 8 and page 2"]], [100, 78]))
 S.append(PageBreak())
@@ -396,7 +439,8 @@ flow = [["Step", "What happens", "Output"],
         ["3  Pressure Index", "Leverage = expected |change in WP| over the league outcome distribution for the phase, "
          "scaled so the league average = 1; x1.25 in knockouts. Pressure ball = PI >= 1.5.", "PI per ball; 18.3% are pressure"],
         ["4  Expectation model", "League-expected runs, dismissal, boundary and dot probability given innings, over, "
-         "wickets, required rate, scoring environment.", "Context-neutral residuals"],
+         "wickets, required rate, scoring environment; then adjusted for the ground and the exact opponent on that ball.",
+         "Context-neutral residuals"],
         ["5  Player rating", "Component-wise empirical-Bayes shrinkage; pressure evidence shrunk toward the player's own "
          "baseline; four components combined into the PRI.", "PRI per batter and bowler"],
         ["6  Model averaging", f"Re-run steps 3-5 under {N_SPECS} specifications (thresholds, weights, priors, recency, "
@@ -479,6 +523,22 @@ S.append(P("Raw strike rate and economy under pressure are biased by role. A fin
            "model</b> (gradient-boosted, trained on all 195k balls) that predicts expected runs, dismissal, boundary and "
            "dot probability from the innings, over, wickets down, required rate and scoring environment. The player's "
            "contribution on that ball is actual minus expected."))
+S.append(P("Adjusting for the ground and the opponent", "h2"))
+S.append(P("The situation is not the whole story. A batter who faces Bumrah and Narine has a harder job than one facing "
+           "an associate attack, and some grounds are simply easier to score at. So each ball's expectation is adjusted "
+           "twice more, using the data itself: <b>a ground effect</b> (how many more or fewer runs and wickets that venue "
+           "gives than average) and <b>an opponent effect</b> (how many more or fewer runs and wickets the bowler a batter "
+           "faced, or the batter a bowler bowled at, gives or takes than average). The ground, the opponent and the player "
+           "himself are fitted together, so a good batter is not mistaken for a flat pitch. Every effect is shrunk toward "
+           "zero in proportion to its evidence, so a ground with three matches or an opponent with a few overs barely "
+           f"moves anything. Sizes in this data: among the {int(CTX['bat_grounds_10plus'])} grounds with 10 or more matches "
+           f"(of {int(CTX['bat_grounds'])}), the most and least batting-friendly differ by about "
+           f"<b>{CTX['bat_ground_spread_rpo']:.1f} runs an over</b>. Opponents matter more: an average batter facing Bumrah is "
+           f"expected to score <b>{-CTX['bumrah']:.0f} fewer runs per 100 balls</b> (Narine {-CTX['narine']:.0f} fewer), and an "
+           f"average bowler bowling at Sooryavanshi is expected to concede <b>{CTX['sooryavanshi']:.0f} more</b> (Abhishek "
+           f"Sharma {CTX['abhishek']:.0f} more)."))
+S.append(P("xRuns(ball) = league expectation(situation) + ground effect + opponent effect     (same for wickets, boundaries, dots)<br/>"
+           "effects fitted jointly with each player's own effect; each shrunk by n / (n + k), k from the data", "formula"))
 S.append(P(f"Quality per ball  Q = (runs - xRuns) - (dismissal - xDismissal) x WV        [batters]<br/>"
            f"Q (bowlers)       = -(runs conceded - xRuns) + (wicket - xWicket) x WV<br/>"
            f"WV = run value of a wicket in pressure states, from the expected-runs model = {pb['WV_True']:.1f} runs<br/>"
@@ -530,9 +590,9 @@ S.append(P(f"Final score(player) = (1/{N_SPECS}) x SUM over specs s of PRI<sub>s
 _r = bat.loc[6396]
 _pool = bat[bat.eligible]
 _z = {c: (_r[c] - _pool[c].mean()) / _pool[c].std() for c in ("pq", "succ_s", "lift", "wpa_s")}
-we = [["Step", "Tim David (batter #1)", "What it means"],
+we = [["Step", f"Tim David (batter #{crank['bat'][6396]})", "What it means"],
       ["1. Pressure balls", f"{int(_r.n_p)} balls in {int(_r.p_matches)} tense matches", "Balls with Pressure Index 1.5 or more"],
-      ["2. Raw level under pressure", f"{_r.q_p_raw:+.1f} runs per 100 balls", "vs an average batter in the same situations; each dismissal counts as runs lost"],
+      ["2. Raw level under pressure", f"{_r.q_p_raw:+.1f} runs per 100 balls", "vs an average batter in the same situations, at the same grounds, against the same bowlers; each dismissal counts as runs lost"],
       ["3. Usual level (normal balls)", f"{_r.q_base:+.1f}", "his normal-ball level, shrunk toward the league average"],
       ["4. Level under pressure, as used", f"{_r.pq:+.1f} = ({_r.q_p_raw:.1f} x {int(_r.n_p)} + {_r.q_base:.1f} x 500) / ({int(_r.n_p)} + 500)",
        "pressure evidence weighed against his usual level (500-ball prior)"],
@@ -564,9 +624,12 @@ S.append(table([["Issue", "How we handle it"],
                 ["<b>IPL vs T20I scoring environments</b>", "The win-probability, expected-runs and expectation models all "
                  "include a scoring-environment feature (runs per over by competition type and year: IPL 2026 = 9.85, "
                  "T20I 2024 = 8.47). Beating expectation in a 9.9-RPO league is judged against 9.9, not 8.5."],
-                ["<b>Opposition quality</b>", "Balls weighted by the opponent: IPL franchises and the top-10 full members = 1.0; "
-                 "Zimbabwe and Ireland = 0.75; associates and A-teams = 0.5. A batter is judged on the bowling attack "
-                 "faced, a bowler on the batting line-up bowled at."],
+                ["<b>Opposition quality</b>", "Two layers. (1) Every ball's expectation is adjusted for the exact opponent: the "
+                 "bowler a batter faced, the batter a bowler bowled at (Section 3). So runs off a weak attack count for less "
+                 "and wickets of tail-enders are expected anyway. (2) On top, balls are weighted by the opposing team: IPL "
+                 "franchises and the top-10 full members = 1.0; Zimbabwe and Ireland = 0.75; associates and A-teams = 0.5."],
+                ["<b>Ground</b>", f"A ground effect for each of the {int(CTX['bat_grounds'])} venues, shrunk toward average by "
+                 "how many matches it has hosted, so a few freak games at one ground cannot move a rating (Section 3)."],
                 ["<b>Role and phase</b>", "Handled by the expectation model (over, wickets, required rate), so openers and "
                  "finishers are each compared with what is normal for their situation."],
                 ["<b>Attribution</b>", "Batters are credited with runs off the bat and their own dismissal only (a "
@@ -599,14 +662,15 @@ for r in tier_s.itertuples():
                  str(r.final_top10_eligible), str(r.final_top10_in_tier_top10)])
 S.append(table(trow, [24, 20, 26, 34, 38, 36]))
 S.append(Spacer(1, 3))
+_t20i_led = list(cards[cards.ipl_rank.isna() & (cards.ipl_share < 0.5)].name)
 ipl_b = tier_s[(tier_s.role == "bat") & (tier_s.tier == "IPL only")].iloc[0]
 ipl_w = tier_s[(tier_s.role == "bowl") & (tier_s.tier == "IPL only")].iloc[0]
 S.append(P(f"The competition-specific ratings agree closely with the combined one (rank correlation "
            f"{tier_s.spearman.min():.2f} to {tier_s.spearman.max():.2f}). Of the final top 10s, "
            f"{ipl_b.final_top10_in_tier_top10} of {ipl_b.final_top10_eligible} batters and {ipl_w.final_top10_in_tier_top10} "
            f"of {ipl_w.final_top10_eligible} bowlers with enough IPL pressure balls are also top 10 on IPL evidence alone. "
-           "Three picks rest mainly on T20I evidence (Reeza Hendricks, Mujeeb Ur Rahman, Mark Adair); they are flagged on "
-           "their player cards, as is Sooryavanshi, who has fewer than 100 pressure balls in either competition alone. "
+           f"{and_list(_t20i_led)} rest{'s' if len(_t20i_led) == 1 else ''} mainly on T20I evidence (flagged on the player "
+           f"cards), as does Sooryavanshi's small sample: fewer than 100 pressure balls in either competition alone. "
            "Combining the competitions mainly adds sample size, which is why we keep both.", "small"))
 S.append(P("Why level and lift, not lift alone", "h2"))
 S.append(P("The brief asks how players perform under pressure compared with their usual level. We measure that as Lift "
@@ -625,7 +689,7 @@ for i, (pid, r) in enumerate(tb.head(10).iterrows(), 1):
                  f"{int(r.n_p)} / {int(r.p_matches)}", f"{r.SR_p:.0f} ({r.xSR_p:.0f})", f"{int(r.outs_p)} ({r.exp_outs_p:.1f})",
                  f"{r.avg_p:.1f}", f"{r.lift:+.1f}", f"{r.succ_raw*100:.0f}%", f"{r.consensus_PRI:+.2f}", f"{r.top10_share*100:.0f}%"])
 S.append(table(rows, [8, 31, 14, 22, 17, 18, 12, 13, 14, 13, 16]))
-S.append(P("SR (exp.) = strike rate under pressure vs what an average batter would score in exactly those situations. "
+S.append(P("SR (exp.) = strike rate under pressure vs what an average batter would score in exactly those situations, grounds and match-ups. "
            "Outs (exp.) = dismissals vs the expected number. Lift = runs above own baseline per 100 pressure balls. "
            "Consist. = share of pressure matches beating expectation. † dead heat, ordered by share of specifications in the top 10, then pressure matches. "
            "IPL 2026 team = team in the data pack; 2027 status is on page 2 and in Section 8.", "small"))
@@ -637,36 +701,52 @@ S.append(P("Figure: every pressure match each batter played (at least 4 pressure
 S.append(PageBreak())
 S.append(P("Why each batter ranks where they do", "h2"))
 cl = closers
+def _sr(pid):
+    return f"strike rate {tb.SR_p[pid]:.0f} vs {tb.xSR_p[pid]:.0f} expected"
+
+
+def _out(pid):
+    return f"out {int(tb.outs_p[pid])} times vs {tb.exp_outs_p[pid]:.1f} expected"
+
+
+def _t10(pid, R=None):
+    return f"top 10 in {(cons['bat'] if R is None else R).top10_share[pid]*100:.0f}% of specifications"
+
+
 bat_notes = [
-    ("Tim David", "Strike rate 182 vs 147 expected; 54% of his pressure balls come at the death. Hit the winning runs in "
-     f"<b>{int(cl.loc[6396,'hit_winning_runs'])} chases that reached extreme pressure</b>, among the most in the data. "
-     "Top 10 in 99% of specifications. Dead-heated with Sooryavanshi for #1 and ranked first on evidence (26 pressure matches vs 14)."),
-    ("Vaibhav Sooryavanshi (RR)", "Strike rate 232 vs 163 expected, the most explosive pressure output in the data, and "
-     "top 10 in 93% of specifications. <b>Smallest sample in the top 10</b> (119 balls, 14 matches); lift is neutral, so "
-     "he plays the same way under pressure. Aged 15, he became India's youngest international debutant (T20I, 4 Jul "
-     "2026). Core RR asset."),
-    ("Tilak Varma", "The largest pressure sample in the pool (540 balls, 44 matches). Dismissed 17 times vs 31 expected "
-     "(pressure average 47.6). Ordinary in normal situations, so his <b>+18.8 lift is the biggest of any batter</b>: "
-     "the purest pressure riser in the data."),
-    ("Yashasvi Jaiswal (RR)", "<b>The only batter in the top 10 under all 73 specifications</b>, with the most stable score "
-     "in the pool. Strike rate 173 vs 145 expected, lift +9.0, 42 knockout pressure balls."),
-    ("Shreyas Iyer", "Strike rate 156 vs 141 expected, lift +10.6; hit the winning runs in 4 extreme-pressure chases; "
-     "34 knockout pressure balls. Sensitive to the pressure threshold (top 10 in 58% of specifications)."),
-    ("Phil Salt", "The biggest strike-rate surplus in the top 10 (186 vs 143 expected), bought at a price: 15 dismissals vs "
-     "11.8 expected. A high-variance attacking profile (58% consistency) that still ranks top 10 in 75% of specifications."),
-    ("Suryakumar Yadav", "The most pressure matches in the pool (51). Strike rate 167 vs 140 expected, dismissed less often "
-     "than expected (23 vs 27.8)."),
-    ("Abhishek Sharma", "The highest normal-situation quality in the pool, but he <b>dips under pressure</b> (lift -8.6, "
-     "56% consistency). He stays top 10 because even his dipped level is elite. Lowest-conviction pick above the cut."),
-    ("Rinku Singh", "Dismissed only <b>6 times in 245 pressure balls against 15.7 expected</b> (average 68.7). Beat "
-     "expectation in <b>18 of 20 pressure matches (90%)</b>, the joint-best consistency in the pool (with Hendricks, on twice the matches), and hit the winning runs in "
-     "5 extreme-pressure chases."),
-    ("Reeza Hendricks", "Strike rate 186 vs 152 expected and out 5 times vs 7.9 expected. Beat expectation in <b>9 of "
-     "his 10 pressure matches (90%)</b>, the joint-best consistency in the pool with Rinku. In a dead heat with Harry Brook "
-     "and Daryl Mitchell (all within 0.013); he has the highest score of the three and is top 10 in the most "
-     "specifications (59% vs 40% and 30%), so he takes the slot. The caveat: 10 pressure matches, the eligibility floor, "
-     "all in T20Is. Brook is banned from the IPL until the 2028 auction; Mitchell (#12) remains RR's best middle-order "
-     "auction buy (Section 8). In no IPL squad, so in the 2027 auction if he registers."),
+    ("Vaibhav Sooryavanshi (RR)", f"{_sr(50284).capitalize()}: the most explosive pressure output in the data, and "
+     f"{_t10(50284)}. <b>Smallest sample in the top 10</b> ({int(tb.n_p[50284])} balls, {int(tb.p_matches[50284])} matches); "
+     f"lift is near neutral ({tb.lift[50284]:+.1f}), so he plays the same way under pressure. Aged 15, he became India's "
+     "youngest international debutant (T20I, 4 Jul 2026). Core RR asset."),
+    ("Tim David", f"{_sr(6396).capitalize()}; {tb.death_share_p[6396]*100:.0f}% of his pressure balls come at the death. "
+     f"Hit the winning runs in <b>{int(cl.loc[6396, 'hit_winning_runs'])} chases that reached extreme pressure</b>, the "
+     f"most of anyone in our top 10. {_t10(6396).capitalize()}."),
+    ("Tilak Varma", f"The largest pressure sample in the pool ({int(tb.n_p[7897])} balls, {int(tb.p_matches[7897])} matches). "
+     f"Dismissed {int(tb.outs_p[7897])} times vs {tb.exp_outs_p[7897]:.0f} expected (pressure average {tb.avg_p[7897]:.1f}). "
+     f"Ordinary in normal situations, so his <b>{tb.lift[7897]:+.1f} lift is the biggest of any batter</b>: the purest "
+     "pressure riser in the data."),
+    ("Yashasvi Jaiswal (RR)", f"<b>The only batter in the top 10 under all {N_SPECS} specifications.</b> "
+     f"{_sr(6819).capitalize()}, lift {tb.lift[6819]:+.1f}, {int(tb.ko_balls_p[6819])} knockout pressure balls."),
+    ("Shreyas Iyer", f"{_sr(3647).capitalize()}, lift {tb.lift[3647]:+.1f}; hit the winning runs in "
+     f"{int(cl.loc[3647, 'hit_winning_runs'])} extreme-pressure chases; {int(tb.ko_balls_p[3647])} knockout pressure balls. "
+     f"Depends on the pressure threshold: near the top at the strictest setting, outside the top 20 at the loosest "
+     f"({_t10(3647)})."),
+    ("Suryakumar Yadav", f"The most pressure matches in the pool ({int(tb.p_matches[1699])}). {_sr(1699).capitalize()}, "
+     f"dismissed less often than expected ({int(tb.outs_p[1699])} vs {tb.exp_outs_p[1699]:.1f})."),
+    ("Abhishek Sharma", f"The highest normal-situation level in the pool, but he <b>dips under pressure</b> (lift "
+     f"{tb.lift[6281]:+.1f}, {tb.succ_raw[6281]*100:.0f}% consistency). He stays top 10 because even his dipped level is "
+     "elite."),
+    ("Phil Salt", f"{_sr(5553).capitalize()}, bought at a price: {_out(5553)}. A high-variance attacking profile "
+     f"({tb.succ_raw[5553]*100:.0f}% consistency) that is still {_t10(5553)}."),
+    ("Rinku Singh", f"Dismissed only <b>{int(tb.outs_p[4708])} times in {int(tb.n_p[4708])} pressure balls against "
+     f"{tb.exp_outs_p[4708]:.1f} expected</b> (average {tb.avg_p[4708]:.1f}). Beat expectation in <b>18 of 20 pressure "
+     "matches (90%)</b>, the best consistency in the pool on more than 10 matches, and hit the winning runs in "
+     f"{int(cl.loc[4708, 'hit_winning_runs'])} extreme-pressure chases."),
+    ("Daryl Mitchell", f"{_sr(4106).capitalize()} and {_out(4106)} (pressure average {tb.avg_p[4106]:.1f}), batting at "
+     f"No. 4. Mostly T20I evidence for New Zealand ({tb.ipl_share_p[4106]*100:.0f}% of his pressure balls in the IPL), "
+     f"and the lowest-conviction pick ({_t10(4106)}): Dasun Shanaka (#{crank['bat'][2436]}) and Harry Brook "
+     f"(#{crank['bat'][6280]}) are close behind. Went unsold at the 2026 auction, so he is in the 2027 auction: "
+     "RR's best middle-order buy (Section 8)."),
 ]
 for n, t in bat_notes:
     S.append(Paragraph(f"<b>{n}.</b> {t}", st["bullet"], bulletText="\u2022"))
@@ -674,7 +754,8 @@ S.append(fig("f4_bat_scatter", 150))
 S.append(fig("f14_bat_specs", 150))
 S.append(P(f"Grey = rank in each of the {N_SPECS} specifications; blue = mean rank. The final order uses the mean score, not the "
            "mean rank, so a few very low ranks under the strictest settings can pull the blue dot below the final position "
-           "(Abhishek Sharma: final #8, median rank 7, mean rank 11).", "small"))
+           f"(Abhishek Sharma: final #{crank['bat'][6281]}, median rank {cons['bat'].median_rank[6281]:.0f}, mean rank "
+           f"{cons['bat'].mean_rank[6281]:.0f}).", "small"))
 
 # ------------------------------------------------------------------ 6. bowlers
 S.append(PageBreak())
@@ -682,12 +763,12 @@ S.append(P("6  EVIDENCE: TOP 10 BOWLERS", "kick"))
 S.append(P("The best bowlers under pressure: level, lift and consistency", "h1"))
 rows = [["#", "Bowler", "IPL 2026 team", "Type", "Legal balls / matches", "Econ (exp.)", "Wkts (exp.)", "Dot %", "Lift", "Cons.", "Score", "Specs top-10"]]
 for i, (pid, r) in enumerate(tw.head(10).iterrows(), 1):
-    rows.append([str(i), f"<b>{r['name']}</b>", team(r.ipl_2026_team).replace("Not in an IPL 2026 squad", "-"),
+    rows.append([f"{i}{'†' if r.tied else ''}", f"<b>{r['name']}</b>", team(r.ipl_2026_team).replace("Not in an IPL 2026 squad", "-"),
                  r.bowl_type.replace("Right-arm ", "RA ").replace("Left-arm ", "LA ").replace("Slow left-arm orthodox", "SLA").replace("Chinaman", "wrist spin"),
                  f"{int(r.legal_p)} / {int(r.p_matches)}", f"{r.econ_p:.2f} ({r.xecon_p:.2f})", f"{int(r.outs_p)} ({r.exp_outs_p:.1f})",
                  f"{r.dotpct_p:.0f}%", f"{r.lift:+.1f}", f"{r.succ_raw*100:.0f}%", f"{r.consensus_PRI:+.2f}", f"{r.top10_share*100:.0f}%"])
 S.append(table(rows, [7, 27, 13, 20, 17, 19, 16, 10, 11, 12, 12, 14]))
-S.append(P("Econ (exp.) = runs conceded per over under pressure vs the expected economy for those exact situations. "
+S.append(P("Econ (exp.) = runs conceded per over under pressure vs the expected economy for those exact situations, grounds and batters. "
            "Wkts (exp.) = wickets vs expected. Consist. = share of pressure matches beating expectation. Legal balls exclude "
            "wides and no-balls; the player cards count all pressure deliveries.", "small"))
 S.append(fig("f13_bowl_dumbbell", 160))
@@ -696,28 +777,49 @@ S.append(P("Figure: every pressure match each bowler played (at least 6 pressure
 
 S.append(PageBreak())
 S.append(P("Why each bowler ranks where they do", "h2"))
+def _ec(pid):
+    return f"economy {tw.econ_p[pid]:.2f} vs {tw.xecon_p[pid]:.2f} expected"
+
+
+def _wk(pid):
+    return f"{int(tw.outs_p[pid])} wickets vs {tw.exp_outs_p[pid]:.1f} expected"
+
+
+def _t10w(pid):
+    return f"top 10 in {cons['bowl'].top10_share[pid]*100:.0f}% of specifications"
+
+
 bowl_notes = [
-    ("Josh Hazlewood", "<b>29 wickets against 14.6 expected</b> in 264 pressure balls, conceding 7.82 an over against "
-     "9.44 expected. Ordinary in normal situations, so his <b>+22.9 lift is the largest of any player</b>. Ranked #1 or "
-     "#2 in almost every specification; 38 knockout pressure balls."),
-    ("Rashid Khan", "The biggest bowling sample among our top 10 (464 legal balls, 33 matches): 31 wickets vs 22.4 expected, "
-     "economy 7.19 vs 8.43. Top 10 in every specification and never worse than 4th."),
-    ("Sunil Narine", "Economy 6.58 vs 8.33 expected, 74% consistency, all IPL evidence. Elite normally and still lifts "
-     "+10.5. Age (38 in 2026) is the auction risk, not performance."),
-    ("Krunal Pandya", "Economy 7.01 vs 8.28, 17 wickets vs 11.0, 27 knockout pressure balls. <b>The most stable score "
-     "among top-10 bowlers</b> across specifications."),
-    ("Kuldeep Yadav", "23 wickets vs 16.7 expected, economy 7.84 vs 8.96, lift +11.5. Top 10 in every specification."),
-    ("Varun Chakravarthy", "Economy 7.55 vs 8.43 across 360 pressure balls; lift +6.7. Top 10 in 90% of specifications."),
-    ("Mujeeb Ur Rahman", "Economy 6.55 vs 8.31, 15 wickets vs 8.5. Half his pressure overs are in the powerplay: a "
-     "new-ball squeeze spinner. <b>Unsold at the 2026 auction</b>, so he is in the 2027 auction."),
-    ("Jasprit Bumrah", "The biggest economy gap in the top 10: 6.98 vs 9.11 expected. Wickets are below expectation "
-     "(15 vs 18.6), so his pressure value is run suppression. He averages 7th at pressure thresholds 1.25 and 1.5 and "
-     "drops out only under the strictest 2.0 threshold."),
-    ("Matheesha Pathirana", "A pure death specialist (60% of pressure balls at the death): 9.40 an over where 10.70 is "
-     "expected, in the hardest overs to bowl. Top 10 in 63% of specifications. <b>Released by KKR on 17 Nov 2026</b>, so he is "
-     "in the 2027 auction."),
-    ("Mark Adair", "A death-overs pacer (53% at the death) with 17 wickets vs 10.4 expected. <b>In no IPL squad</b>: "
-     "a value option. Edges Wanindu Hasaranga (11th) by 0.05."),
+    ("Josh Hazlewood", f"<b>{_wk(830)}</b> in {int(tw.legal_p[830])} pressure balls, {_ec(830)}. Ordinary in normal "
+     f"situations, so his <b>{tw.lift[830]:+.1f} lift is the largest of any player</b>. Never worse than "
+     f"#{int(cons['bowl'].worst_rank[830])} in any specification; {int(tw.ko_balls_p[830])} knockout pressure balls."),
+    ("Rashid Khan", f"The biggest bowling sample among our top 10 ({int(tw.legal_p[4722])} legal balls, "
+     f"{int(tw.p_matches[4722])} matches): {_wk(4722)}, {_ec(4722)}. Top 10 in every specification and never worse than "
+     f"#{int(cons['bowl'].worst_rank[4722])}. In a dead heat with Narine (scores {cons['bowl'].consensus_PRI[4722]:.2f} and "
+     f"{cons['bowl'].consensus_PRI[781]:.2f}); placed first on more pressure matches."),
+    ("Sunil Narine", f"{_ec(781).capitalize()}, {tw.succ_raw[781]*100:.0f}% consistency, all IPL evidence. Elite normally "
+     f"and still lifts {tw.lift[781]:+.1f}. Age (38 in 2026) is the auction risk, not performance."),
+    ("Krunal Pandya", f"{_ec(4219).capitalize()}, {_wk(4219)}, {int(tw.ko_balls_p[4219])} knockout pressure balls. Top 10 "
+     "in every specification, all on IPL evidence."),
+    ("Varun Chakravarthy", f"{_ec(6256).capitalize()} across {int(tw.legal_p[6256])} pressure balls; lift "
+     f"{tw.lift[6256]:+.1f}. {_t10w(6256).capitalize()}."),
+    ("Kuldeep Yadav", f"{_wk(3644)}, {_ec(3644)}, lift {tw.lift[3644]:+.1f}. <b>The most stable score among top-10 "
+     f"bowlers</b> across specifications."),
+    ("Jasprit Bumrah", f"The biggest economy gap in the top 10: {tw.econ_p[2933]:.2f} vs {tw.xecon_p[2933]:.2f} expected. "
+     f"Wickets are below expectation ({int(tw.outs_p[2933])} vs {tw.exp_outs_p[2933]:.1f}), so his pressure value is run "
+     "suppression. He is top 10 in every specification at pressure thresholds 1.25 and 1.5, and in only a third of "
+     "those at the strictest 2.0 threshold."),
+    ("Mitchell Santner", f"{_ec(4101).capitalize()}, {_wk(4101)}, lift {tw.lift[4101]:+.1f}. Most of his pressure overs "
+     f"came in T20Is for New Zealand ({tw.ipl_share_p[4101]*100:.0f}% in the IPL), often against strong batting: he rises "
+     f"from #13 to #{crank['bowl'][4101]} once each ball is judged against the batter faced (Test 8). "
+     f"{_t10w(4101).capitalize()}."),
+    ("Matheesha Pathirana", f"A pure death specialist ({tw.death_share_p[8661]*100:.0f}% of pressure balls at the death): "
+     f"{tw.econ_p[8661]:.2f} an over where {tw.xecon_p[8661]:.2f} is expected, in the hardest overs to bowl. "
+     f"{_t10w(8661).capitalize()}. <b>Released by KKR on 17 Nov 2026</b>, so he is in the 2027 auction."),
+    ("Wanindu Hasaranga", f"{_wk(4900)}, {_ec(4900)}, lift {tw.lift[4900]:+.1f}, {int(tw.ko_balls_p[4900])} knockout "
+     f"pressure balls. A three-way dead heat for 9th to 11th with Pathirana and Lockie Ferguson (scores "
+     f"{cons['bowl'].consensus_PRI[8661]:.2f}, {cons['bowl'].consensus_PRI[4900]:.2f}, {cons['bowl'].consensus_PRI[4692]:.2f}), "
+     f"ordered by share of specifications in the top 10. <b>Released by LSG</b>, so he is in the 2027 auction."),
 ]
 for n, t in bowl_notes:
     S.append(Paragraph(f"<b>{n}.</b> {t}", st["bullet"], bulletText="\u2022"))
@@ -725,12 +827,13 @@ S.append(fig("f5_bowl_scatter", 150))
 S.append(fig("f15_bowl_specs", 150))
 S.append(P(f"Grey = rank in each of the {N_SPECS} specifications; blue = mean rank. The final order uses the mean score, not the "
            "mean rank, so a few very low ranks under the strictest settings can pull the blue dot below the final position "
-           "(Bumrah: final #8, median rank 8, mean rank 13.5).", "small"))
+           f"(Bumrah: final #{crank['bowl'][2933]}, median rank {cons['bowl'].median_rank[2933]:.0f}, mean rank "
+           f"{cons['bowl'].mean_rank[2933]:.1f}).", "small"))
 
 # ------------------------------------------------------------------ 7. reliability
 S.append(PageBreak())
 S.append(P("7  RELIABILITY AND LIMITATIONS", "kick"))
-S.append(P("Is the ranking signal or noise? We tested it seven ways", "h1"))
+S.append(P("Is the ranking signal or noise? We tested it eight ways", "h1"))
 S.append(P("<b>Test 1: split-half reliability.</b> Matches were randomly split into two halves 40 times; we correlated "
            "each player's metric across halves (Spearman-Brown corrected to the full sample). A metric that cannot "
            "agree with itself cannot rank players."))
@@ -745,7 +848,7 @@ S.append(P("<b>Each part of the score on its own.</b> The level under pressure, 
            f"{CC[('bowl', 'Lift (as used)')]:.2f}; consistency {CC[('bat', 'Consistency (share of tense games won)')]:.2f} and "
            f"{CC[('bowl', 'Consistency (share of tense games won)')]:.2f}). We keep them because the brief asks for both "
            "'compared with their usual level' and 'consistently', at 20% each so they adjust the ranking rather than drive "
-           "it; Test 7 shows these weights predict later seasons better than weights tuned on the data.", "small"))
+           "it; Test 7 shows these weights predict later seasons at least as well as weights tuned on the data.", "small"))
 S.append(P("<b>Test 2: out-of-time prediction.</b> We rebuilt every rating using only 2022-24 data and asked how well it "
            "ranks players' actual pressure performance in 2025-26 (players with 60+ pressure balls in both windows).", "p"))
 tvr = [["Estimator built on 2022-24", "Batters: rank corr. with 2025-26 pressure quality", "Bowlers"]]
@@ -834,7 +937,7 @@ t6.append(table(sr, [34, 18, 26, 26, 16, 34, 24]))
 t6.append(Spacer(1, 3))
 t6.append(P("Values are rank correlations with the true pressure quality (1 = perfect). <b>Ours recovers the truth best in every "
             "scenario, for batters and bowlers</b>; 'pressure minus normal' is close to useless, as Test 5 found on the real "
-            "data. Our 80% ranges are cautious (they hold the truth 84-99% of the time). Even a perfect method finds only "
+            f"data. Our 80% ranges are cautious (they hold the truth {sim.coverage80.min()*100:.0f}-{sim.coverage80.max()*100:.0f}% of the time). Even a perfect method finds only "
             "about three of the true top 10, because pressure samples are small: this is why ranks 6-10 are a tier, not an "
             "exact order. The real data's own variation implies pressure-specific skill close to zero, matching Test 2.", "small"))
 S.append(KeepTogether(t6))
@@ -852,13 +955,35 @@ for role, lab in (("bat", "Batters"), ("bowl", "Bowlers")):
                f"{int(r.top10_overlap)} of 10"])
 t7.append(table(wr, [18, 34, 36, 34, 28, 22]))
 t7.append(Spacer(1, 3))
-t7.append(P(f"<b>On new players our fixed weights predict better than data-chosen ones</b> ({hw.loc['bat', 'cv_ours']:.2f} vs "
-            f"{hw.loc['bat', 'cv_chosen']:.2f} for batters, {hw.loc['bowl', 'cv_ours']:.2f} vs {hw.loc['bowl', 'cv_chosen']:.2f} "
-            f"for bowlers): tuned weights only look better on the players they were tuned on. For bowlers the data's own best "
+t7.append(P(f"<b>On new players our fixed weights predict at least as well as data-chosen ones</b> ({hw.loc['bat', 'cv_ours']:.2f} vs "
+            f"{hw.loc['bat', 'cv_chosen']:.2f} for batters, a tie within noise; {hw.loc['bowl', 'cv_ours']:.2f} vs {hw.loc['bowl', 'cv_chosen']:.2f} "
+            f"for bowlers, better in {hw.loc['bowl', 'cv_ours_wins']*100:.0f}% of splits): tuned weights only look better on the players they were tuned on. For bowlers the data's own best "
             f"weighting ({hw.loc['bowl', 'best_weights']}) is close to ours. For batters it puts everything on win impact, "
             "which ignores the brief's 'compared with their usual level'; applying it would keep "
             f"{int(hw.loc['bat', 'top10_overlap'])} of our 10 batters. We keep the brief-driven weights.", "small"))
 S.append(KeepTogether(t7))
+# ---- Test 8: the ground and opponent adjustment
+t8 = [P("<b>Test 8: does adjusting for the ground and the opponent help?</b> We ran the whole pipeline (all "
+        f"{N_SPECS} specifications, both time windows) twice: with the adjustment (our method) and without it. Both were "
+        "built on 2022-24 and scored on how well they rank the same players' pressure performance in 2025-26, against "
+        "three targets: future pressure quality measured without the adjustment, with it, and future win impact.", "p")]
+c8 = [["Built on 2022-24", "Role", "Future pressure quality (unadjusted)", "Future pressure quality (adjusted)", "Future win impact"]]
+for r in ctxc.itertuples():
+    fin = "final" in r.method
+    lab = "<b>With ground and opponent (ours)</b>" if fin else "Without"
+    f = (lambda x: f"<b>{x:+.3f}</b>") if fin else (lambda x: f"{x:+.3f}")
+    c8.append([lab, "Batters" if r.role == "bat" else "Bowlers", f(r.future_q_unadjusted), f(r.future_q_adjusted), f(r.future_wpa)])
+t8.append(table(c8, [50, 18, 38, 38, 34]))
+t8.append(Spacer(1, 3))
+_w8 = ctxc.pivot(index="role", columns="method")
+_better = sum((ctxc[ctxc.method.str.contains("final")].set_index("role")[c] > ctxc[~ctxc.method.str.contains("final")].set_index("role")[c]).sum()
+              for c in ("future_q_unadjusted", "future_q_adjusted", "future_wpa"))
+t8.append(P(f"Values are rank correlations (1 = perfect). <b>The adjusted ratings predict the future better in {_better} of the 6 "
+            "comparisons</b> (the other is a tie), including against the unadjusted target, which the adjustment does not touch. "
+            "The gains are small (about 50 players per test), but they all point the same way, and split-half "
+            f"reliability rises for bowlers (from {REL_OLD['bowl']:.2f} to {rel_pq_w:.2f}; batters {REL_OLD['bat']:.2f} to "
+            f"{rel_pq_b:.2f}). So we adopted it. <b>What it changed:</b> " + _moves_txt + ".", "small"))
+S.append(KeepTogether(t8))
 # ---- the questions a sceptical judge will ask, answered from the data
 _E = bowl[bowl.eligible]
 _ps = _E.groupby("pace_spin").pq.mean()
@@ -872,6 +997,11 @@ _ad = _bb[(_bb.bowler_id == 5379) & (_bb.PI >= 1.5)].batting_team_id.map(_tn)
 _full = {"Afghanistan", "Australia", "Bangladesh", "England", "India", "New Zealand", "Pakistan", "South Africa",
          "Sri Lanka", "West Indies"}
 _ad_full = _ad.isin(_full).mean()
+_C = pd.read_pickle(f"{OUT}/context_bowl_9999.pkl")
+_rb = pd.read_pickle(f"{OUT}/resid_bowl.pkl")
+_mu_idx = _rb[(_rb.pid == 6450) & _rb.P].index
+_mu_uae = int((_rb.loc[_mu_idx, "match_id"].map(_mt.set_index("match_id").venue_country) == "United Arab Emirates").sum())
+_ctx_mu = {"v": _C.loc[_mu_idx, "v_r"].mean() * 100, "o": _C.loc[_mu_idx, "o_r"].mean() * 100}
 sq = [P("Questions a sceptic will ask", "h2")]
 sq += bullets([
     f"<b>Home bias? Two RR batters are in the top 4.</b> The same rules rate every player; team and availability play no "
@@ -880,9 +1010,11 @@ sq += bullets([
     f"<b>Why {_n_spin} spinners in the bowling top 10?</b> Across the whole pool, spinners beat expectation under pressure "
     f"far more than pacers (average Pressure Quality {_ps['Spin']:+.1f} vs {_ps['Pace']:+.1f} runs per 100 balls). It is "
     "not a role artefact: the ranking is only weakly tied to death-over share (Test 5).",
-    f"<b>Did Mark Adair only beat weak teams?</b> No: {_ad_full*100:.0f}% of his {len(_ad)} pressure balls came against "
-    "full-member nations (Afghanistan, South Africa, New Zealand, Bangladesh, India and others). Balls against associates "
-    "count half and against Zimbabwe three-quarters (Section 4).",
+    "<b>Did anyone get in by playing weak teams or on slow grounds?</b> We checked by judging every ball against its "
+    "ground and its exact opponent (Test 8). It changed the lists: " + _moves_txt + ". Mujeeb's figures were helped "
+    f"mostly by low-scoring grounds (his pressure balls came at grounds worth {-_ctx_mu['v']:.1f} fewer runs per 100 balls "
+    f"than average; {_mu_uae} of his {len(_mu_idx)} came in the UAE), not by weak batting; Santner rose because he bowled "
+    "at above-average batters.",
     f"<b>Where are Klaasen and Buttler?</b> Klaasen is clearly worse than his own normal level under pressure (Lift "
     f"{bat.lift[4260]:+.1f}, #{crank['bat'][4260]}); Buttler is #{crank['bat'][813]}, scoring only a little above an average "
     "batter in the same spots (Section 10).",
@@ -899,11 +1031,14 @@ S += bullets([
     "<b>Pressure skill is only partly persistent.</b> Even our best metric has a reliability of about 0.5. Treat ranks "
     "6-10 as a tier rather than a strict order; the bootstrap intervals overlap.",
     "<b>Near the cut-off.</b> Sooryavanshi (119 pressure balls, 15 of them from A-team matches weighted at 0.5) is the "
-    "biggest single risk in the lists: much of his score is his normal-situation level. Rinku Singh, Shreyas "
-    "Iyer, Mark Adair and Reeza Hendricks are top 10 in fewer than 60% of specifications; Hendricks, Brook and Mitchell "
-    "are statistically level for 10th, and Hendricks rests on the minimum 10 pressure matches.",
-    "<b>Model and data gaps.</b> The win-probability model ignores team strength, venue and toss (first-innings AUC 0.69); "
-    "no fielding or match-up modelling; no T20 World Cups in the pack; 2027 auction prices are unknown.",
+    "biggest single risk in the lists: much of his score is his normal-situation level. "
+    + and_list(list(pd.concat([cons["bat"].head(10), cons["bowl"].head(10)])[lambda d: d.top10_share < 0.6].name))
+    + " are top 10 in fewer than 60% of specifications. Bowlers 9 to 11 (Pathirana, Hasaranga, Ferguson) are a "
+    "statistical dead heat.",
+    "<b>Model and data gaps.</b> The win-probability model that defines pressure ignores team strength, venue and toss "
+    "(first-innings AUC 0.69). The ratings do adjust for ground and opponent, but the pack identifies a ground only by "
+    "an ID, and grounds with few matches stay close to average by design. No fielding data; no T20 World Cups in the "
+    "pack; 2027 auction prices are unknown.",
 ])
 
 # ------------------------------------------------------------------ 8. RR lens
@@ -914,18 +1049,23 @@ S.append(fig("f8_rr_profile", 178))
 S.append(P("Same PRI machinery applied at team level, IPL 2025-26. Close game = the tensest third of matches (peak "
            "Pressure Index 8 or more).", "small"))
 S.append(P("Diagnosis from the data", "h2"))
+_tpb = pd.read_csv(f"{OUT}/team_profile_bat.csv").set_index("team").loc["Rajasthan Royals"]
+_tpw = pd.read_csv(f"{OUT}/team_profile_bowl.csv").set_index("team").loc["Rajasthan Royals"]
+_ord = lambda n: f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 S += bullets([
     f"<b>Close games are the leak.</b> In the tensest third of games RR won {int(cg_rr.close_wins)} of {int(cg_rr.close_games)}, "
     f"the lowest win rate of the 10 teams ({cg_rr.win_pct:.0f}%); RCB won {int(cg_top.close_wins)} of {int(cg_top.close_games)} (small samples). In 2026 RR finished 4th "
     "on 16 points while RCB, SRH and GT tied on 18 for the top two places, which bring a second chance at the final. "
     "In 2025 RR were 9th. One more win a season is the difference that matters.",
-    "<b>Pressure batting at the death: -16 runs per 100 balls vs expectation.</b> RR's top order is strong under "
+    f"<b>Pressure batting at the death: {_tpb.Death:+.0f} runs per 100 balls vs expectation.</b> RR's top order is strong under "
     f"pressure (Sooryavanshi #{crank['bat'][50284]}, Jaiswal #{crank['bat'][6819]}), but the finishing core does not lift: "
-    f"Hetmyer ranks {crank['bat'][3297]}th (lift +0.2; released on 17 Nov) and Jurel {crank['bat'][7260]}th (lift -2.1).",
-    "<b>Pressure bowling ranks 7th of 10, and three frontline bowlers dip.</b> Sandeep Sharma (lift -11.2, rank "
-    f"{crank['bowl'][2411]} of {int(bowl.eligible.sum())}), Sam Curran (-10.8, rank {crank['bowl'][4409]}) and Ravi Bishnoi "
-    f"(-6.4, rank {crank['bowl'][7503]}) all perform clearly worse under pressure than in normal play. Archer is neutral "
-    f"(rank {crank['bowl'][3298]}). Tushar Deshpande (+7.4, rank {crank['bowl'][6806]}) was RR's best pressure bowler.",
+    f"Hetmyer ranks {_ord(crank['bat'][3297])} (lift {bat.lift[3297]:+.1f}; released on 17 Nov) and Jurel {_ord(crank['bat'][7260])} "
+    f"(lift {bat.lift[7260]:+.1f}).",
+    f"<b>Pressure bowling ranks {_ord(int(_tpw['rank']))} of 10, and three frontline bowlers dip.</b> Sandeep Sharma (lift "
+    f"{bowl.lift[2411]:+.1f}, rank {crank['bowl'][2411]} of {int(bowl.eligible.sum())}), Sam Curran ({bowl.lift[4409]:+.1f}, rank "
+    f"{crank['bowl'][4409]}) and Ravi Bishnoi ({bowl.lift[7503]:+.1f}, rank {crank['bowl'][7503]}) all perform clearly worse under "
+    f"pressure than in normal play. Archer is about neutral (lift {bowl.lift[3298]:+.1f}, rank {crank['bowl'][3298]}). Tushar "
+    f"Deshpande ({bowl.lift[6806]:+.1f}, rank {crank['bowl'][6806]}) was RR's best pressure bowler.",
     "<b>What changed on 17 Nov 2026 (official).</b> RR released Hetmyer and Deshpande, traded Curran to LSG, and brought in "
     f"Mohammed Shami and Manimaran Siddharth from LSG. Our data supports letting Curran go; it flags Shami (lift "
     f"{bowl.lift[1566]:+.1f}, rank {crank['bowl'][1566]}) as another bowler who dips under pressure, so his best use is the "
@@ -941,12 +1081,13 @@ S.append(P("wins added = SUM over replaced balls (PQ<sub>pick</sub> - PQ<sub>inc
            "WinProb-per-run(Pressure Index band)", "formula"))
 S.append(fig("f16_wins_added", 132))
 mid_bal = int(imp[imp.slot == "middle / finish"].slot_balls.iloc[0])
+_bw = imp[imp.slot.isin(["pace", "spin"])].groupby("slot").wins.max()
 pace_bal = int(imp[imp.slot == "pace"].slot_balls.iloc[0])
 spin_bal = int(imp[imp.slot == "spin"].slot_balls.iloc[0])
 S.append(P(f"Below-par pressure balls in 2026: {mid_bal} in the middle order, {pace_bal} for pace and {spin_bal} for spin, but "
            "almost none in the top order. That gives the auction its shape. <b>A top-order pick (Salt, Abhishek) adds "
            "almost nothing to RR</b>, because Jaiswal and Sooryavanshi already win those balls. <b>Bowling is where the wins "
-           "are:</b> the best pace and spin picks add 0.3-0.4 wins each. The three slots are independent, so the gains "
+           f"are:</b> the best pace and spin picks add {_bw.min():.1f}-{_bw.max():.1f} wins each. The three slots are independent, so the gains "
            f"add up: {', '.join(best_trio.name)} together are worth about {best_trio.wins.round(2).sum():.2f} wins a season. Bars "
            "show an 80% range from the uncertainty in each player's rating. The chart covers our top 10s; the auction plan "
            "below applies the same replay to the players who are actually in the 2027 auction.", "small"))
@@ -954,6 +1095,9 @@ S.append(P("2027 auction plan: the best buys RR can actually make", "h2"))
 S.append(P(f"Built on the official retention lists ({AS_OF}). RR have <b>Rs {RR_PURSE} Cr, {RR_SLOTS} slots and {RR_OVERSEAS_SLOTS} "
            "overseas places</b>. Every player below is in the 16 Dec auction pool. Wins added = the same 2026 replay as the chart "
            "above; a second player for the same gap adds little, because the gains come from the same balls.", "small"))
+
+
+_mu_e = (tw.econ_p[6450], tw.xecon_p[6450])
 
 
 def arow(name, note):
@@ -966,14 +1110,17 @@ def arow(name, note):
 
 plan = [["", "Player", "Uses", "Wins added", "Why", "Last IPL fee"]]
 first = [arow(n, w) for n, w in (
-    ("Mujeeb Ur Rahman", "Best spin buy in the pool: economy 6.55 vs 8.31 expected. Takes Bishnoi's tense overs."),
-    ("Mark Adair", "Best pace buy: 17 wickets vs 10.4 expected, 53% of his pressure balls at the death."),
-    ("Daryl Mitchell", "Best middle-order buy: out 6 times vs 10.4 expected; fills the gap Hetmyer leaves."))]
+    ("Tushar Deshpande", f"Best pace buy, and Indian, so no overseas place: RR's best pressure bowler in 2026 (lift "
+     f"{bowl.lift[6806]:+.1f}). Released by RR on 17 Nov; worth buying back at auction prices."),
+    ("Mujeeb Ur Rahman", f"Best spin buy for RR: economy {_mu_e[0]:.2f} vs {_mu_e[1]:.2f} expected. Takes Bishnoi's tense "
+     f"overs. Outside the overall top 10 (#{crank['bowl'][6450]}) once grounds are allowed for, but RR's spin gap is big."),
+    ("Daryl Mitchell", f"Best middle-order buy and #{crank['bat'][4106]} overall: out {int(tb.outs_p[4106])} times vs "
+     f"{tb.exp_outs_p[4106]:.1f} expected; fills the gap Hetmyer leaves."))]
 alts = [arow(n, w) for n, w in (
-    ("Tushar Deshpande", "Indian, so no overseas slot: RR's best pressure bowler in 2026. The pace pick if an overseas slot is needed elsewhere."),
-    ("Wanindu Hasaranga", "Spin back-up to Mujeeb (#11); released by LSG."),
-    ("Matheesha Pathirana", "Top 10 overall, but his gain for RR is lower than Adair's, and his last fee was two-thirds of RR's purse."),
-    ("Lockie Ferguson", "Pace back-up (#12); released by PBKS."))]
+    ("Lockie Ferguson", f"Overseas pace option (#{crank['bowl'][4692]}, level with #9-#10); released by PBKS."),
+    ("Wanindu Hasaranga", f"Top 10 overall (#{crank['bowl'][4900]}); spin back-up to Mujeeb; released by LSG."),
+    ("Matheesha Pathirana", "Top 10 overall, but his gain for RR is lower than Deshpande's, and his last fee was two-thirds of RR's purse."),
+    ("Mark Adair", f"Death-overs pace (#{crank['bowl'][5379]}); in no IPL squad, so likely cheap."))]
 for i, r in enumerate(first):
     plan.append(["<b>1. Bid first</b>" if i == 0 else ""] + r)
 for i, r in enumerate(alts):
@@ -981,14 +1128,14 @@ for i, r in enumerate(alts):
 S.append(table(plan, [17, 34, 15, 21, 68, 23]))
 S.append(Spacer(1, 3))
 S.append(P(f"<b>Plan 1 adds about +{free_trio.wins.round(2).sum():.2f} wins a season</b> ({free_trio.wins.round(2).sum() / best_trio.wins.round(2).sum() * 100:.0f}% "
-           f"of the best possible trio, whose members were all retained), with all {RR_OVERSEAS_SLOTS} overseas places. "
-           "Two of the three went unsold at the 2026 auction and the third has never played in the IPL: the market has passed "
-           "on them, but all three rank in the top 12 of all players under pressure. "
-           "Keep: Sooryavanshi (#2) and Jaiswal (#4). Use carefully: Sandeep Sharma, Ravi Bishnoi and Shami in lower-leverage overs. "
-           "Watch list: M Shahrukh Khan, an uncapped finisher released by GT, whose small sample would rank about #15 "
-           "(Section 10).", "small"))
-S.append(P("Not available: Harry Brook (#11, level for 10th on performance) is banned from the IPL until the 2028 auction. Tim David, "
-           "Hazlewood, Narine, Krunal, Kuldeep and Varun were all retained, so only a trade could bring them to RR.", "small"))
+           f"of the best possible trio, whose members were all retained), using {n_os} of RR's {RR_OVERSEAS_SLOTS} overseas places "
+           "(Deshpande is Indian), which leaves one for a back-up. Mitchell and Mujeeb went unsold at the 2026 auction, so the "
+           "market has passed on them. "
+           f"Keep: Sooryavanshi (#{crank['bat'][50284]}) and Jaiswal (#{crank['bat'][6819]}). Use carefully: Sandeep Sharma, Ravi "
+           "Bishnoi and Shami in lower-leverage overs. Watch list: M Shahrukh Khan, an uncapped finisher released by GT, whose "
+           f"small sample would rank about #{int(gems_all[gems_all.pid == 3782].would_rank.iloc[0])} (Section 10).", "small"))
+S.append(P(f"Not available: Harry Brook (#{crank['bat'][6280]}) is banned from the IPL until the 2028 auction. Most of the top 10s "
+           "were retained by their teams (see below), so only a trade could bring them to RR.", "small"))
 
 # ---- can RR actually get them?
 route_head = [P("Can RR actually get them? The route to each pick", "h2"),
@@ -1139,8 +1286,9 @@ for r in gems.itertuples():
                f"{r.outs} ({r.xouts:.1f})", f"{r.n_p} / {r.matches}", f"~#{r.would_rank}"])
 S.append(table(gr, [36, 24, 20, 36, 22, 22, 18]))
 S.append(Spacer(1, 3))
+_sk = gems_all[gems_all.pid == 3782].iloc[0]
 S.append(P("<b>Why it matters for RR:</b> every gem here is in the 2027 auction pool. M Shahrukh Khan is an uncapped Indian "
-           "finisher released by GT: out 2 times against 5.7 expected, in the middle-order slot where RR lose wins, and he "
+           f"finisher released by GT: out {_sk.outs} times against {_sk.xouts:.1f} expected, in the middle-order slot where RR lose wins, and he "
            "needs no overseas place. Uncapped players have a much lower base price than established stars. Like Season 1's "
            "Vignesh Puthur, these are worth tracking now; the evidence will firm up with one more season.", "small"))
 
@@ -1148,6 +1296,7 @@ S.append(P("Don't pay for a pressure reputation", "h2"))
 S.append(P("Strong players in normal conditions whose output clearly falls under pressure (Lift of -5 or worse, with at least 200 pressure balls of evidence). A "
            "franchise paying for their reputation in tense moments would be overpaying. Abhishek Sharma is the one top-10 "
            "player with a dip: he ranks because his normal level is the highest in the pool.", "small"))
+_ar = dips[dips.pid == 6464].iloc[0]
 dd = pd.concat([dips, fam[fam.reason.str.startswith("clearly worse")]]).drop_duplicates("name")
 dd = dd[~dd.pid.isin(TOP_IDS) & (dd.team != "Rajasthan Royals") & (dd.n_p >= 200)].sort_values("lift")
 dr_ = [["Player", "IPL 2027", "Under pressure (vs average)", "vs his own normal level", "Delivered in", "Our rank"]]
@@ -1157,8 +1306,9 @@ for r in dd.itertuples():
 S.append(table(dr_, [36, 26, 40, 30, 26, 20]))
 S.append(Spacer(1, 3))
 S.append(P("A player here can still beat the average player (Klaasen does); the point is that he is clearly worse than "
-           "his own normal level. Arshdeep Singh has the largest pressure sample in the data (722 balls): he is about average under pressure "
-           "(9.79 vs 9.98 expected) but far below his normal level, and delivers in only 37% of tense games.", "small"))
+           f"his own normal level. Arshdeep Singh has the largest pressure sample in the data ({int(_ar.n_p)} balls): he is a "
+           f"little better than average under pressure ({_ar.rate:.2f} vs {_ar.xrate:.2f} expected) but far below his normal "
+           f"level (Lift {_ar.lift:+.1f}), and delivers in only {_ar.succ*100:.0f}% of tense games.", "small"))
 
 S.append(PageBreak())
 S.append(P("Why isn't he in our top 10?", "h2"))
@@ -1171,6 +1321,7 @@ S.append(table(fr, [36, 20, 42, 80]))
 
 # ---- young and uncapped (confirmed ages and cap status only)
 yg = pd.read_csv(f"{OUT}/extra_young.csv")
+_su = yg[yg.name == "Suyash Sharma"].iloc[0]
 yb = []
 yb.append(P("Young and uncapped: who already handles pressure?", "h2"))
 yb.append(P("The contest terms (Round 1, clause 5) ask entrants to identify the youngest uncapped player. <b>Our answer: Ayush "
@@ -1184,7 +1335,7 @@ for r in yg.itertuples():
     yr.append([f"<b>{r.name}</b>", str(r.age), r.style, team_label(r.name, r.team), rec(r), f"{r.outs} ({r.xouts:.1f})", str(r.matches)])
 yb.append(table(yr, [34, 10, 30, 18, 38, 26, 18]))
 yb.append(Spacer(1, 3))
-yb.append(P("<b>Reading:</b> Suyash Sharma (23, leg-spinner) gives away about 1.5 runs an over fewer than expected under "
+yb.append(P(f"<b>Reading:</b> Suyash Sharma (23, leg-spinner) gives away about {_su.xrate - _su.rate:.1f} runs an over fewer than expected under "
             "pressure; Abdul Samad (25) and Abishek Porel (24) score clearly faster than an average batter in the same spots. "
             "None has enough evidence for the top 10 yet.", "small"))
 S.append(KeepTogether(yb))
@@ -1205,13 +1356,14 @@ S.append(table([["Script", "What it does"],
                 ["extras.py, trades.py", "Hidden gems, players who dip under pressure, famous absences, young uncapped; confirmed trades, availability, caps and ages"],
                 ["compare.py, simulate.py, heldout_weights.py, checks.py", "Head-to-head (Test 5), known-answer simulation (Test 6), held-out weights (Test 7), pressure-decile and per-component checks"],
                 ["tier_check.py, rr_impact.py, cards.py", "IPL-only and T20I-only re-ratings; wins added for RR; player-card data"],
+                ["ctx_compare.py, factor_swing.py", "Ground and opponent adjustment vs the same pipeline without it (Test 8); rank swing per modelling choice (Test 4)"],
                 ["stage3_tables.py, stage4_figures.py, stage4b_figures.py, stage5_report.py", "Team profiles, figures, this report"]],
                [52, 126]))
 S.append(Spacer(1, 3))
 S.append(P("Key parameters: pressure threshold PI >= 1.5; knockout multiplier 1.25; recency half-life 2.5 years; baseline "
            "prior K = 500 pressure balls; consistency prior 12 matches; eligibility >= 100 pressure balls and >= 10 "
-           "pressure matches, active 2025+. Models: scikit-learn HistGradientBoosting with fixed random seeds. "
-           "Python 3, pandas, scikit-learn, matplotlib, reportlab.", "small"))
+           "pressure matches, active 2025+; ground and opponent adjustment on (CONTEXT_ADJ = True). Models: scikit-learn "
+           "HistGradientBoosting with fixed random seeds. Python 3, pandas, scikit-learn, matplotlib, reportlab.", "small"))
 S.append(P("C. Next 12 and excluded players (transparency)", "h2"))
 
 

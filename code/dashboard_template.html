@@ -308,7 +308,7 @@ footer { color: var(--muted); font-size: 12.5px; text-align: center; padding: 0 
   <!-- ============ TOP 10 ============ -->
   <section id="tab-top">
     <div class="explain">
-      <div><b>Pressure</b> means the moments when the next ball could swing the match: about 1 ball in 5. We rated every player on those moments, comparing what he did with what an average player would have done in exactly the same situation. Our top 10 ranks every player. Many were kept by their teams for 2027, so below it is the <b>RR auction board</b>: the 20 best players RR can actually buy on 16 December, with a backup order if a pick is missed. Click any player to see why he is on the list.</div>
+      <div><b>Pressure</b> means the moments when the next ball could swing the match: about 1 ball in 5. We rated every player on those moments, comparing what he did with what an average player would have done in exactly the same situation, at the same ground and against the same opponent. Our top 10 ranks every player. Many were kept by their teams for 2027, so below it is the <b>RR auction board</b>: the 20 best players RR can actually buy on 16 December, with a backup order if a pick is missed. Click any player to see why he is on the list.</div>
       <button class="info" type="button" data-g="pressure" aria-label="What is pressure?">i</button>
     </div>
     <div class="row-between">
@@ -417,7 +417,7 @@ footer { color: var(--muted); font-size: 12.5px; text-align: center; padding: 0 
   <section id="tab-how" hidden>
     <div class="steps">
       <div class="step"><span class="num">1</span><b>Find the pressure balls</b><p>For every ball since 2022 we estimate each team's chance of winning. A pressure ball is one where the next delivery can swing that chance a lot. Proof it works: these 18% of balls carry 46% of all the swings in the result.</p></div>
-      <div class="step"><span class="num">2</span><b>Compare with an average player</b><p>We compare what each player did with what an average player would have done in exactly the same situation, and with his own normal level.</p></div>
+      <div class="step"><span class="num">2</span><b>Compare with an average player</b><p>We compare what each player did with what an average player would have done in exactly the same situation, at the same ground and against the same batter or bowler, and with his own normal level.</p></div>
       <div class="step"><span class="num">3</span><b>Check it's skill, not luck</b><p>We only trust a measure that gives the same answer on two random halves of a player's matches.</p></div>
       <div class="step"><span class="num">4</span><b>Test 288 versions</b><p>We changed every judgement call and averaged the results, so no single choice decides the list.</p></div>
     </div>
@@ -447,8 +447,9 @@ footer { color: var(--muted); font-size: 12.5px; text-align: center; padding: 0 
       <div>
         <div><h3>Known-answer test: how close each method gets to the truth</h3><div class="tablewrap" style="border:0"><table id="simT"></table></div></div>
         <div style="margin-top:18px"><h3>Our weights vs weights chosen by the data<button class="info" type="button" data-g="hw" aria-label="About the weights test">i</button></h3><div class="tablewrap" style="border:0"><table id="hwT"></table></div></div>
+        <div style="margin-top:18px"><h3>Judging each ball against its ground and opponent<button class="info" type="button" data-g="ctx" aria-label="About the ground and opponent test">i</button></h3><div class="tablewrap" style="border:0"><table id="ctxT"></table></div><p class="small" id="ctxN" style="margin:8px 0 0"></p></div>
       </div>
-      <p class="small" style="margin:10px 0 0"><b>In plain words:</b> our method finds the true pressure performers better than the usual approaches in every scenario. Weights tuned by the data looked better only on the players they were tuned on; on new players our weights predict better.</p>
+      <p class="small" style="margin:10px 0 0"><b>In plain words:</b> our method finds the true pressure performers better than the usual approaches in every scenario. Weights tuned by the data looked better only on the players they were tuned on; on new players our weights predict at least as well. Allowing for the ground and the opponent made the ratings predict later seasons a little better, so it is part of every score.</p>
     </div>
     <div class="card">
       <h2>Try it yourself: change our settings<button class="info" type="button" data-g="lab" aria-label="About the settings">i</button></h2>
@@ -481,7 +482,7 @@ footer { color: var(--muted); font-size: 12.5px; text-align: center; padding: 0 
     <p class="lead" style="margin:0">Two minutes. No statistics needed.</p>
     <ol>
       <li><div><b>Pressure</b> = the moments when the next ball could swing the match. About 1 ball in 5.</div></li>
-      <li><div><b>"vs an average player"</b> = what he did compared with what an average player would have done in exactly the same situation. This keeps openers and finishers fair.</div></li>
+      <li><div><b>"vs an average player"</b> = what he did compared with what an average player would have done in exactly the same situation, at the same ground and against the same opponent. This keeps openers and finishers fair, and stops anyone gaining from small grounds or weak bowling.</div></li>
       <li><div><b>Delivered</b> = in how many of his tense games he beat that average.</div></li>
       <li><div><b>How sure</b> = we ran the analysis 73 ways. "Very sure" means he is top 10 in almost all of them.</div></li>
       <li><div><b>For Rajasthan Royals</b> turns it into extra wins per season for RR.</div></li>
@@ -540,8 +541,8 @@ const chip = p => {
 // ---------- glossary (single source for every ⓘ)
 const G = {
   pressure: ["Pressure", "The moments when the next ball could swing the match. We estimate each team's chance of winning before every ball; if the next ball can change it a lot, it's a pressure ball. About 1 ball in 5.", "Needing 12 off the last over with 2 wickets left is huge pressure. Needing 12 off 6 overs with 8 wickets left is not.", null],
-  vsavg_bat: ["Under pressure, vs an average batter", "How many more runs he scored per 100 pressure balls than an average batter would have scored in exactly the same situations. The rank also counts how rarely he gets out, how often he delivers and how he compares with his usual self, so the longest bar is not always #1.", "+35 = 35 extra runs every 100 balls when it matters.", "Higher is better"],
-  vsavg_bowl: ["Under pressure, vs an average bowler", "How many fewer runs he gave away per over on pressure balls than an average bowler would have in exactly the same situations. The rank also counts wickets, how often he delivers and how he compares with his usual self, so the longest bar is not always #1.", "1.8 fewer = almost two runs an over saved when it matters.", "Higher is better"],
+  vsavg_bat: ["Under pressure, vs an average batter", "How many more runs he scored per 100 pressure balls than an average batter would have scored in exactly the same situations, grounds and match-ups. The rank also counts how rarely he gets out, how often he delivers and how he compares with his usual self, so the longest bar is not always #1.", "+35 = 35 extra runs every 100 balls when it matters.", "Higher is better"],
+  vsavg_bowl: ["Under pressure, vs an average bowler", "How many fewer runs he gave away per over on pressure balls than an average bowler would have in exactly the same situations, at the same grounds, bowling to the same batters. The rank also counts wickets, how often he delivers and how he compares with his usual self, so the longest bar is not always #1.", "1.8 fewer = almost two runs an over saved when it matters.", "Higher is better"],
   delivered: ["Delivered", "In how many of his tense games he did better than an average player would have. The bar fills up with the share of games he delivered in.", "18 of 20 = he delivered in 18 of 20 tense games.", "Higher is better"],
   sure: ["How sure we are", "We ran the whole analysis 73 different reasonable ways. Very sure = top 10 in at least 90% of them; Sure = 60%+; Borderline = 30-60%.", null, null],
   score: ["Pressure score", "One number combining everything: beating the average player, doing it often, rising above his usual level, and changing results. 0 = average of the players we rated.", "+1 or more = elite.", "Higher is better"],
@@ -562,7 +563,8 @@ const G = {
   famous: ["Why not in the top 10?", "Each well-known name with the main reason from the data: just outside, about average under pressure, slower than an average player in the same spots, or a drop under pressure.", null, null],
   route: ["Route to RR", "How RR could sign him for 2027, from the official retention lists. Auction = he can be bought on 16 Dec. Retained = his team kept him, so only a trade could move him. Already at RR = keep.", "The rankings show who performs best under pressure; this shows who RR can actually get.", null],
   sim: ["Known-answer test", "Each player keeps his real balls and situations, but we set his true skill and simulate every ball as truth plus realistic noise, 200 times. Numbers show how closely each method's ranking matches the truth (1 = perfect).", "'Pressure minus normal' scores near 0: it cannot find the truth even when we know it is there.", "Higher is better"],
-  hw: ["Data-chosen weights", "We tried all 1,771 ways of weighting the four parts of the score on 2022-24 data, picking the best on half the players and testing it on the other half, 1,000 times. Our hand-set weights predicted 2025-26 better on the unseen half.", null, "Higher is better"],
+  hw: ["Data-chosen weights", "We tried all 1,771 ways of weighting the four parts of the score on 2022-24 data, picking the best on half the players and testing it on the other half, 1,000 times. Our hand-set weights predicted 2025-26 at least as well on the unseen half: clearly better for bowlers, level for batters.", null, "Higher is better"],
+  ctx: ["Ground and opponent", "Some grounds are easier to score at, and facing Bumrah is harder than facing an average bowler. Every ball's 'average player' is adjusted for both, using the data. We built the ratings on 2022-24 with and without this, and checked which better predicts 2025-26.", "Facing Bumrah, an average batter is expected to score about 36 fewer runs per 100 balls.", "Higher is better"],
   h2h: ["Head-to-head test", "Skill, not luck = does the measure agree with itself across two random halves of a player's games (higher is better). Predicts next seasons = built on 2022-24, how well it ranks 2025-26 pressure performance (higher is better). Role bias = how much the ranking just follows how often a player bats or bowls at the death (lower is fairer).", null, null],
   young: ["Young and uncapped", "Uncapped = has never played for India's senior team in any format. Ages and cap status were checked against public records (17 Nov 2026). With so few tense games, these numbers can change quickly.", null, null],
   closegames: ["Close game", "One of the tensest third of IPL matches in 2025-26: the match reached a pressure level of 8 or more, so the result was genuinely in doubt late on.", null, null],
@@ -744,7 +746,7 @@ function rr() {
   $("#planBackup").innerHTML = R7.backup.map(li).join("");
   const tot = R7.first.reduce((a, n) => a + byName(n).wins, 0), idl = ideal.reduce((a, p) => a + p.wins, 0);
   $("#trioN").textContent = "a season: " + best.map(p => p.name).join(", ");
-  $("#planNote").innerHTML = `<b>Plan 1 adds about +${tot.toFixed(2)} wins a season</b> with RR's ${R7.overseas} overseas places: ${Math.round(tot / idl * 100)}% of the best possible trio (${ideal.map(p => esc(p.name)).join(", ")}), all of whom were retained by their teams. Two of the three went unsold in 2026 and the third has never played in the IPL: the market passed on them, but all three rank in the top 12 under pressure. Pathirana is top 10 too, but adds less for RR than Adair, and his last fee (Rs 18 Cr) is two-thirds of RR's budget.`;
+  $("#planNote").innerHTML = `<b>Plan 1 adds about +${tot.toFixed(2)} wins a season</b>: ${Math.round(tot / idl * 100)}% of the best possible trio (${ideal.map(p => esc(p.name)).join(", ")}), all of whom were retained by their teams. Deshpande is Indian, so the plan uses only two of the three overseas places. RR released him, but he was their best pressure bowler in 2026. Mitchell and Mujeeb went unsold in 2026: the market passed on them. Pathirana and Hasaranga are top 10 overall, but add less for RR, and Pathirana's last fee (Rs 18 Cr) is two-thirds of RR's budget.`;
   $$("#tab-rr .plan li.click").forEach(l => l.onclick = () => openPlayer(l.dataset.key));
   $("#trioV").textContent = "+" + best.reduce((a, p) => a + p.wins, 0).toFixed(2) + " wins";
   $("#trioN").textContent = "a season: " + best.map(p => p.name).join(", ");
@@ -834,6 +836,11 @@ function how() {
     DATA.sim.map(r => `<tr style="cursor:default"><td>${SN[r.scenario]}</td><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${r.raw.toFixed(2)}</td><td class="num">${r.minus.toFixed(2)}</td><td class="num" style="background:var(--blue-soft)"><b>${r.ours.toFixed(2)}</b></td></tr>`).join("") + `</tbody>`;
   $("#hwT").innerHTML = `<thead><tr><th>Players</th><th class="num">Data-chosen weights</th><th class="num">Our weights</th><th class="num">Ours as good or better</th></tr></thead><tbody>` +
     DATA.hw.map(r => `<tr style="cursor:default"><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${r.cv_chosen.toFixed(2)}</td><td class="num" style="background:var(--blue-soft)"><b>${r.cv_ours.toFixed(2)}</b></td><td class="num">${Math.round(r.cv_ours_wins * 100)}% of tests</td></tr>`).join("") + `</tbody>`;
+  $("#ctxT").innerHTML = `<thead><tr><th>Built on 2022-24</th><th>Players</th><th class="num">Predicts 2025-26 pressure play</th><th class="num">Predicts 2025-26 win impact</th></tr></thead><tbody>` +
+    DATA.ctx.rows.map(r => { const ours = r.method.includes("final"); return `<tr style="cursor:default${ours ? ";background:var(--blue-soft)" : ""}"><td>${ours ? "<b>With ground and opponent (ours)</b>" : "Without"}</td><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${ours ? "<b>" : ""}${r.future_q_adjusted.toFixed(2)}${ours ? "</b>" : ""}</td><td class="num">${ours ? "<b>" : ""}${r.future_wpa.toFixed(2)}${ours ? "</b>" : ""}</td></tr>`; }).join("") + `</tbody>`;
+  const mv = DATA.ctx.moves, sz = DATA.ctx.size;
+  $("#ctxN").innerHTML = `<b>What it changed:</b> ` + mv.filter(m => m.rank_with > 10).map(m => `${esc(m.name)} (#${m.rank_without} → #${m.rank_with})`).join(", ") + ` drop out; ` +
+    mv.filter(m => m.rank_with <= 10).map(m => `${esc(m.name)} (#${m.rank_without} → #${m.rank_with})`).join(", ") + ` come in. Grounds with 10+ games differ by about ${sz.bat_ground_spread_rpo.toFixed(1)} runs an over; facing Bumrah costs an average batter about ${Math.round(-sz.bumrah)} runs per 100 balls.`;
   $("#h2h").innerHTML = `<thead><tr><th>Method</th><th>Players</th><th class="num">Skill, not luck</th><th class="num">Predicts next seasons</th><th class="num">Role bias (lower = fairer)</th></tr></thead><tbody>` +
     DATA.compare.map(r => `<tr style="cursor:default${r.method.startsWith("Ours") ? ";background:var(--blue-soft)" : ""}"><td>${r.method.startsWith("Ours") ? "<b>Ours</b>" : nm[r.method]}</td><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${r.reliability.toFixed(2)}</td><td class="num">${(r.next_seasons >= 0 ? "+" : "") + r.next_seasons.toFixed(2)}</td><td class="num">${r.role_bias.toFixed(2)}</td></tr>`).join("") + `</tbody>`;
   lab();

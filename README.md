@@ -8,11 +8,13 @@ their usual level, and ranks the players who deliver most consistently when it m
 - **Live dashboard:** https://rr-pressure-index-xi.vercel.app
 - **Pressure** = the expected swing in win probability on the next ball (Pressure Index >= 1.5, about 18% of deliveries),
   from win-probability models fitted on IPL and T20I data, 2022-2026.
-- **Rating** = context-adjusted pressure quality (vs an average player in the same situation), Lift (vs the player's own
+- **Rating** = context-adjusted pressure quality (vs an average player in the same situation, at the same ground and
+  against the same opponent), Lift (vs the player's own
   normal level), consistency across pressure matches and win impact, with empirical-Bayes shrinkage, averaged over 73
   model specifications.
 - **Checks:** split-half reliability, bootstrap, out-of-time test (2022-24 -> 2025-26), IPL-only / T20I-only re-ratings,
-  a head-to-head test against common approaches, a known-answer simulation and weights chosen on held-out seasons.
+  a head-to-head test against common approaches, a known-answer simulation, weights chosen on held-out seasons and a
+  test of the ground and opponent adjustment.
 - **RR lens:** wins added for Rajasthan Royals and an auction board built on the official IPL 2027 retention lists.
 
 ## Data
@@ -30,6 +32,7 @@ The competition data pack is **not** included (it may not be shared). Put its CS
 | `validate.py`, `closers.py`, `compare.py` | Out-of-time test, extreme-pressure chase closers, head-to-head with common approaches |
 | `simulate.py`, `heldout_weights.py`, `checks.py` | Known-answer simulation, weights chosen on held-out seasons, pressure-decile check and per-component reliability |
 | `tier_check.py`, `rr_impact.py`, `cards.py`, `extras.py`, `trades.py` | IPL-only / T20I-only checks, wins added for RR, player cards, beyond-the-top-10 lists, 2027 availability |
+| `ctx_compare.py`, `factor_swing.py` | Ground and opponent adjustment vs the same pipeline without it (Test 8); rank swing per modelling choice (Test 4) |
 | `stage3_tables.py`, `stage4_figures.py`, `stage4b_figures.py`, `stage5_report.py` | Team profiles, figures, the PDF report |
 | `grid_specs.py`, `dashboard_data.py`, `dashboard_template.html` | 288-cell model lab and the interactive dashboard |
 
@@ -52,7 +55,7 @@ while IFS=$'\t' read -r t j; do printf '%s\0%s\0' "$t" "$j"; done < out/ensemble
 py code/consensus.py out && py code/validate.py out && py code/closers.py out
 
 # 3. transparency run: the same consensus with Pakistan nationals included
-mkdir -p out_pk && for f in balls.pkl matches.pkl expect_bat_9999.pkl expect_bowl_9999.pkl ensemble_specs.jsonl; do ln -sf ../out/$f out_pk/$f; done
+mkdir -p out_pk && for f in balls.pkl matches.pkl expect_bat_9999.pkl expect_bowl_9999.pkl context_bat_9999.pkl context_bowl_9999.pkl ensemble_specs.jsonl; do ln -sf ../out/$f out_pk/$f; done
 RR_OVERRIDES='{"EXCLUDE_NATIONS": []}' py code/stage2_ratings.py "$D" out_pk
 while IFS=$'\t' read -r t j; do printf '%s\0%s\0' "$t" "$(echo "$j" | sed 's/}$/, "EXCLUDE_NATIONS": []}/')"; done < out/ensemble_specs.jsonl \
   | OMP_NUM_THREADS=1 xargs -0 -n 2 -P 6 sh -c 'RR_OVERRIDES="$1" .venv/bin/python -I code/stage2_ratings.py "$DATA" out_pk 9999 "$0" > /dev/null'
@@ -64,12 +67,22 @@ RR_OVERRIDES='{"TIER_KEEP": ["T20I"]}' py code/stage2_ratings.py "$D" out 9999 _
 py code/stage3_tables.py "$D" out && py code/detail.py
 py code/tier_check.py out && py code/compare.py out && py code/simulate.py out && py code/heldout_weights.py out && py code/checks.py out && py code/rr_impact.py out && py code/cards.py "$D" out && py code/extras.py out
 
+# 4b. Test 8: the same 73-specification pipeline without the ground and opponent adjustment
+mkdir -p out_noctx && for f in balls.pkl matches.pkl expect_bat_9999.pkl expect_bowl_9999.pkl expect_bat_2024.pkl expect_bowl_2024.pkl ensemble_specs.jsonl; do ln -sf ../out/$f out_noctx/$f; done
+RR_OVERRIDES='{"CONTEXT_ADJ": false}' py code/stage2_ratings.py "$D" out_noctx
+RR_OVERRIDES='{"CONTEXT_ADJ": false}' py code/stage2_ratings.py "$D" out_noctx 2024 _to2024
+while IFS=$'\t' read -r t j; do printf '%s\0%s\0' "$t" "$(echo "$j" | sed 's/}$/, "CONTEXT_ADJ": false}/')"; done < out/ensemble_specs.jsonl \
+  | OMP_NUM_THREADS=1 xargs -0 -n 2 -P 6 sh -c 'RR_OVERRIDES="$1" .venv/bin/python -I code/stage2_ratings.py "$DATA" out_noctx 9999 "$0" > /dev/null'
+while IFS=$'\t' read -r t j; do printf '%s\0%s\0' "$t" "$(echo "$j" | sed 's/}$/, "CONTEXT_ADJ": false}/')"; done < out/ensemble_specs.jsonl \
+  | OMP_NUM_THREADS=1 xargs -0 -n 2 -P 6 sh -c 'RR_OVERRIDES="$1" .venv/bin/python -I code/stage2_ratings.py "$DATA" out_noctx 2024 "_to2024$0" > /dev/null'
+py code/consensus.py out_noctx && py code/ctx_compare.py out_noctx out && py code/factor_swing.py out
+
 # 5. figures and report
 py code/stage4_figures.py out && py code/stage4b_figures.py out
 py code/stage5_report.py out out/report.pdf MY_VIEW.md   # trades.py: official 2027 retention lists, trades, RR purse and slots
 
 # 6. dashboard: all 288 grid cells, then inline the derived data into the template
-mkdir -p out_grid && for f in balls.pkl matches.pkl expect_bat_9999.pkl expect_bowl_9999.pkl; do ln -sf ../out/$f out_grid/$f; done
+mkdir -p out_grid && for f in balls.pkl matches.pkl expect_bat_9999.pkl expect_bowl_9999.pkl context_bat_9999.pkl context_bowl_9999.pkl; do ln -sf ../out/$f out_grid/$f; done
 py code/grid_specs.py out_grid
 while IFS=$'\t' read -r t j; do printf '%s\0%s\0' "$t" "$j"; done < out_grid/grid_specs.jsonl \
   | OMP_NUM_THREADS=1 xargs -0 -n 2 -P 6 sh -c 'RR_OVERRIDES="$1" .venv/bin/python -I code/stage2_ratings.py "$DATA" out_grid 9999 "$0" > /dev/null'

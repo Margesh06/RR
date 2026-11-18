@@ -124,8 +124,8 @@ ia = pd.read_csv(f"{OUT}/rr_impact_all.csv")
 data["ideal"] = [dict(name=ia.loc[ia[ia.slot == s_].wins.idxmax(), "name"], wins=r(ia[ia.slot == s_].wins.max()))
                  for s_ in ("middle / finish", "pace", "spin")]
 data["rr27"] = dict(purse=RR_PURSE, slots=RR_SLOTS, overseas=RR_OVERSEAS_SLOTS,
-                    first=["Mujeeb Ur Rahman", "Mark Adair", "Daryl Mitchell"],
-                    backup=["Tushar Deshpande", "Wanindu Hasaranga", "Matheesha Pathirana", "Lockie Ferguson"],
+                    first=["Tushar Deshpande", "Mujeeb Ur Rahman", "Daryl Mitchell"],
+                    backup=["Lockie Ferguson", "Wanindu Hasaranga", "Matheesha Pathirana", "Mark Adair"],
                     fee={"Matheesha Pathirana": "Rs 18 Cr at the 2026 auction", "Wanindu Hasaranga": "Rs 2 Cr (base) at the 2026 auction",
                          "Tushar Deshpande": "Rs 6.5 Cr with RR", "Daryl Mitchell": "unsold at the 2026 auction",
                          "Mujeeb Ur Rahman": "unsold at the 2026 auction", "Mark Adair": "has never played in the IPL"})
@@ -133,6 +133,9 @@ data["young"] = clean(to27(pd.read_csv(f"{OUT}/extra_young.csv")), ["role", "nam
 data["compare"] = pd.read_csv(f"{OUT}/compare_methods.csv").round(2).to_dict(orient="records")
 sim = pd.read_csv(f"{OUT}/simulation.csv")
 data["sim"] = sim[~sim.scenario.str.startswith("As the data")].round(3).to_dict(orient="records")
+data["ctx"] = dict(rows=pd.read_csv(f"{OUT}/ctx_compare.csv").round(3).to_dict(orient="records"),
+                   moves=pd.read_csv(f"{OUT}/ctx_moves.csv").to_dict(orient="records"),
+                   size=pd.read_csv(f"{OUT}/context_summary.csv", index_col=0).value.round(2).to_dict())
 data["hw"] = pd.read_csv(f"{OUT}/heldout_weights.csv").round(3)[["role", "best_weights", "cv_chosen", "cv_ours", "cv_ours_wins", "top10_overlap"]].to_dict(orient="records")
 with open(DST, "w") as f:
     json.dump(data, f, separators=(",", ":"))

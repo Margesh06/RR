@@ -38,6 +38,7 @@ EXCLUDE_NATIONS = {"Pakistan"}           # not available at the IPL auction
 KO_MULT = 1.25          # big-match multiplier on leverage in knockouts
 OPP_WEIGHTING = True    # down-weight balls against associate / A-team opposition
 TIER_KEEP = None        # sensitivity: rate on one competition tier only, e.g. ["IPL"]
+CONTEXT_ADJ = True      # adjust every ball's expectation for the ground and the individual opponent
 
 # sensitivity runs override the constants above, e.g. RR_OVERRIDES='{"PRESSURE": 2.0}'
 import json, os
@@ -47,6 +48,7 @@ if TIER_KEEP:
     b = b[b.tier.isin(TIER_KEEP)].copy()
 
 comps = pd.read_csv(f"{D}/competitions.csv")
+b["venue_id"] = b.match_id.map(pd.read_csv(f"{D}/matches.csv").set_index("match_id").venue_id)
 mpf = mp.merge(comps[["comp_id", "match_format"]], on="comp_id")
 NATION = mpf[mpf.match_format == "T20I"].groupby("player_id").team_name.agg(lambda s: s.mode().iat[0])
 IPL26 = mp[mp.comp_name == "IPL 2026"].drop_duplicates("player_id").set_index("player_id").team_name
@@ -95,8 +97,46 @@ def add_expectations(df, role):
             clf = HistGradientBoostingClassifier(max_iter=200, min_samples_leaf=300, random_state=0).fit(X, df[comp])
             df[f"e_{comp}"] = clf.predict_proba(X)[:, 1]
         df[["e_r", "e_out", "e_bnd", "e_dot"]].to_pickle(cache)
+    if CONTEXT_ADJ:
+        df = add_context(df, role)
     for comp in ("r", "out", "bnd", "dot"):
         df[f"d_{comp}"] = df[comp] - df[f"e_{comp}"]
+    return df
+
+
+def shrunk_mean(y, key):
+    """Per-group mean of y shrunk toward 0 (method-of-moments k), returned per row."""
+    g = y.groupby(key)
+    m, n = g.mean(), g.size()
+    noise = (y.var() / n).mean()
+    tau2 = max(m.var() - noise, m.var() * 0.05)
+    return shrink(m, n, y.var() / tau2).reindex(key).to_numpy()
+
+
+def add_context(df, role):
+    """Ground and opponent effects on top of the league expectation. A two-way model fitted by alternating shrunk
+    means: venue effect, opponent effect (the bowler a batter faced, the batter a bowler bowled to) and the player's
+    own effect, so a batter is not credited for a flat ground or weak bowling and a bowler is not credited for
+    a big ground or bowling at tail-enders. The player's own effect is used only to separate the three."""
+    opp = df.bowler_id if role == "bat" else df.striker_id
+    cache = f"{OUT}/context_{role}_{MAX_YEAR}.pkl"
+    if os.path.exists(cache):
+        C = pd.read_pickle(cache).reindex(df.index)
+    else:
+        C = pd.DataFrame(index=df.index)
+        for comp in ("r", "out", "bnd", "dot"):
+            y = df[comp] - df[f"e_{comp}"]
+            own = ven = op = np.zeros(len(df))
+            for _ in range(5):
+                ven = shrunk_mean(y - own - op, df.venue_id)
+                op = shrunk_mean(y - own - ven, opp)
+                own = shrunk_mean(y - ven - op, df.pid)
+            C[f"v_{comp}"], C[f"o_{comp}"] = ven, op
+        C.to_pickle(cache)
+    for comp in ("r", "out", "bnd", "dot"):
+        df[f"e_{comp}"] = df[f"e_{comp}"] + C[f"v_{comp}"] + C[f"o_{comp}"]
+        if comp != "r":
+            df[f"e_{comp}"] = df[f"e_{comp}"].clip(0.001, 0.999)
     return df
 
 
