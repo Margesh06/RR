@@ -34,7 +34,7 @@ The competition data pack is **not** included (it may not be shared). Put its CS
 
 ## Reproduce (about 10 minutes on 8 cores)
 ```bash
-python3 -m venv .venv && .venv/bin/pip install pandas numpy scikit-learn matplotlib reportlab
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # tested on Python 3.14
 export DATA="Data Pack"; D="$DATA"; mkdir -p out   # folder holding the competition CSVs
 PY=".venv/bin/python -I"
 

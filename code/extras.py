@@ -89,9 +89,11 @@ for role in ("bat", "bowl"):
             reason = f"good under pressure, just outside the top 10 (#{int(rank)})"
         elif abs(gap) <= 0.03:
             reason = "about average under pressure"
-        elif r.lift < 0:
-            reason = (f"above average under pressure, but below his own normal level (Lift {r.lift:+.1f}), "
-                      "which the score counts against him")
+        elif r.lift <= -2:
+            outs = (f"out {int(r.outs_p)} times vs {r.exp_outs_p:.1f} expected, " if role == "bat" and r.outs_p > r.exp_outs_p
+                    else "")
+            reason = (f"scores above average, but {outs}and below his own normal level (Lift {r.lift:+.1f}); "
+                      "both count against him")
         elif r.n_p < 200:
             reason = f"strong numbers, but only {int(r.n_p)} pressure balls, so his rating is pulled toward his normal level"
         elif (r.succ_raw or 0) < 0.6:

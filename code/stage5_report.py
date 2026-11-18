@@ -955,7 +955,8 @@ def card(c):
         f"Beat expectation in <b>{c.n_succ} of {c.p_matches}</b> pressure matches  ·  lift {c.lift:+.1f}  ·  "
         f"top 10 in {c.specs_top10*100:.0f}% of specs",
         f"IPL-only rank {fmt(c.ipl_rank)}  ·  T20I-only rank {fmt(c.t20i_rank)}" + (f"  ·  {ev[0]}" if ev else ""),
-        f"<b>Biggest moment:</b> {c.moment} (<b>+{c.moment_swing:.0f}%</b> win prob.)",
+        f"<b>Biggest moment:</b> {c.moment} (<b>+{c.moment_swing:.0f}%</b> win prob.)"
+        + (" (A-team match; his case rests on sustained output, not one ball)" if "Rising Stars" in c.moment or "Emerging" in c.moment else ""),
         f"<b>RR fit:</b> {fit}",
     ]
     body = Table([[Paragraph(l, ss)] for l in lines], colWidths=[85 * mm])
