@@ -536,7 +536,7 @@ const G = {
   delivered: ["Delivered", "In how many of his tense games he did better than an average player would have. The bar fills up with the share of games he delivered in.", "18 of 20 = he delivered in 18 of 20 tense games.", "Higher is better"],
   sure: ["How sure we are", "We ran the whole analysis 73 different reasonable ways. Very sure = top 10 in at least 90% of them; Sure = 60%+; Borderline = 30-60%.", null, null],
   score: ["Pressure score", "One number combining everything: beating the average player, doing it often, rising above his usual level, and changing results. 0 = average of the players we rated.", "+1 or more = elite.", "Higher is better"],
-  tied: ["Tied", "His score is within 0.01 of the next player's: a statistical tie. The one with more tense games is placed first, because more evidence is more reliable.", null, null],
+  tied: ["Tied", "His score is within 0.01 of the next player's: a statistical tie. The one who is top 10 in more of the 73 versions of our analysis is placed first (the more robust result), then the one with more tense games.", null, null],
   chipRR: ["RR", "Already in the Rajasthan Royals squad.", null, null],
   chipFree: ["In auction", "In no IPL 2027 squad, so RR can bid for him at the 16 December auction if he registers.", null, null],
   chipRel: ["Released", "His team let him go on 17 Nov 2026, so he is in the 16 December auction if he registers.", null, null],
@@ -733,7 +733,7 @@ function rr() {
   $("#planBackup").innerHTML = R7.backup.map(li).join("");
   const tot = R7.first.reduce((a, n) => a + byName(n).wins, 0), idl = ideal.reduce((a, p) => a + p.wins, 0);
   $("#trioN").textContent = "a season: " + best.map(p => p.name).join(", ");
-  $("#planNote").innerHTML = `<b>Plan 1 adds about +${tot.toFixed(2)} wins a season</b> with RR's ${R7.overseas} overseas places: ${Math.round(tot / idl * 100)}% of the best possible trio (${ideal.map(p => esc(p.name)).join(", ")}), all of whom were retained by their teams. Two of the three went unsold in 2026 and the third has never played in the IPL: the market passed on them, but their pressure records are top 10. Pathirana is top 10 too, but adds less for RR than Adair, and his last fee (Rs 18 Cr) is two-thirds of RR's budget.`;
+  $("#planNote").innerHTML = `<b>Plan 1 adds about +${tot.toFixed(2)} wins a season</b> with RR's ${R7.overseas} overseas places: ${Math.round(tot / idl * 100)}% of the best possible trio (${ideal.map(p => esc(p.name)).join(", ")}), all of whom were retained by their teams. Two of the three went unsold in 2026 and the third has never played in the IPL: the market passed on them, but all three rank in the top 12 under pressure. Pathirana is top 10 too, but adds less for RR than Adair, and his last fee (Rs 18 Cr) is two-thirds of RR's budget.`;
   $$("#tab-rr .plan li.click").forEach(l => l.onclick = () => openPlayer(l.dataset.key));
   $("#trioV").textContent = "+" + best.reduce((a, p) => a + p.wins, 0).toFixed(2) + " wins";
   $("#trioN").textContent = "a season: " + best.map(p => p.name).join(", ");

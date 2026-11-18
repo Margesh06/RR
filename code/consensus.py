@@ -1,7 +1,8 @@
 """Model averaging: score the base eligible pool under every ensemble specification, then build a consensus.
 
 Final score = mean PRI (a z-score composite) across all specifications, base included -- averaging the model
-outputs, as in Bayesian model averaging. Dead heats (gap < TIE) go to the player with more pressure matches.
+outputs, as in Bayesian model averaging. Dead heats (gap < TIE, chained) go to the player who is top 10 in more
+specifications (robustness), then to the one with more pressure matches.
 Rank statistics across specifications are reported alongside.
 consensus_{role}.csv ranks the whole eligible pool (the submitted top 10s, as the brief asks). For the auction lens,
 consensus_auction_{role}.csv re-ranks every specification within the IPL 2027 auction pool (official retention lists,
@@ -46,11 +47,11 @@ for role in ("bat", "bowl"):
             "base_rank": M["base"],
             "base_PRI": base.loc[idx, "PRI"],
         })
-        # dead heats: scores within TIE of a neighbour (chained) form a cluster ordered by pressure-match evidence
+        # dead heats: scores within TIE of a neighbour (chained) form a cluster ordered by robustness, then evidence
         C["p_matches"] = base.loc[idx, "p_matches"]
         C = C.sort_values("consensus_PRI", ascending=False)
         C["tie_group"] = (C.consensus_PRI.diff().abs().fillna(np.inf) >= TIE).cumsum()
-        C = C.sort_values(["tie_group", "p_matches"], ascending=[True, False])
+        C = C.sort_values(["tie_group", "top10_share", "p_matches"], ascending=[True, False, False])
         C["consensus_rank"] = np.arange(1, len(C) + 1)
         C["tied"] = C.groupby("tie_group").name.transform("size") > 1
         return C

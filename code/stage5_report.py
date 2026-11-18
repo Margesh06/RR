@@ -211,7 +211,7 @@ S.append(P(f"Score = consensus PRI: performance on pressure balls vs an average 
            f"(vs the player's own normal level, runs per 100 balls), consistency across pressure matches and win impact, "
            f"averaged over {N_SPECS} model specifications (0 = average eligible player). Consist. = share of pressure matches "
            f"beating expectation (Cons.). {n_lift['bat']} of our batters and {n_lift['bowl']} of our bowlers have positive Lift "
-           "(Sooryavanshi and Pathirana roughly neutral; Abhishek Sharma the one dip). † Dead heat (score gap < 0.01, chained), ordered by number of pressure matches. "
+           "(Sooryavanshi and Pathirana roughly neutral; Abhishek Sharma the one dip). † Dead heat (score gap < 0.01, chained), ordered by share of specifications in the top 10, then pressure matches. "
            f"<b>Seven batters and seven bowlers here were kept by other IPL teams for 2027 (two more batters are already at RR), "
            "so RR cannot buy them: page 2 ranks the players RR can buy, with a backup order.</b>", "small"))
 S.append(Spacer(1, 6))
@@ -298,7 +298,7 @@ S += top20("bat")
 S.append(P("<b>Bowlers</b>", "p"))
 S += top20("bowl")
 S.append(P(f"Top 10 of pool: Very sure = 90%+ of {N_SPECS} specifications, Sure 60%+, Borderline 30%+, Unlikely below 30%. Without Brook "
-           "(banned) the Mitchell-Hendricks dead heat no longer chains. Bangladesh players: registered by the BCB, but KKR "
+           "(banned), Hendricks and Mitchell are no longer level. Bangladesh players: registered by the BCB, but KKR "
            "released Mustafizur in Jan 2026 on BCCI instructions, so treat them as a risk.", "small"))
 S.append(PageBreak())
 
@@ -359,8 +359,8 @@ G = [
      "+0.4 sounds small, but RR finished one win short of the top two in 2026."),
     ("80% range", "The range we are 80% confident contains the true value. Wider = less certain, usually because "
      "the player has fewer pressure balls.", None),
-    ("† Dead heat", "Scores within 0.01 of each other are a statistical tie; the player with more pressure matches is "
-     "placed first because more evidence means more reliable.", None),
+    ("† Dead heat", "Scores within 0.01 of each other are a statistical tie. The player who is top 10 in more of the 73 "
+     "versions of the analysis is placed first (robustness), then the one with more pressure matches.", None),
     ("Auction", f"In no IPL 2027 squad after the official retention lists ({AS_OF}), so RR can bid for him at the "
      "16 Dec auction if he registers.", "Pathirana: released by KKR, now in the auction."),
 ]
@@ -512,7 +512,8 @@ S.append(P("Every modelling choice above is defensible, but none is uniquely rig
            "288-cell grid (pressure threshold 1.25 / 1.5 / 2.0; baseline prior 200 / 500 / 1,000 balls; four weighting "
            "schemes; recency on or off; knockout multiplier on or off; opposition weighting on or off). As in Bayesian "
            "model averaging, the final score is the mean PRI across specifications. Scores within 0.01 are a dead heat "
-           "and go to the player with more pressure matches, because more evidence means more reliable.", "p"))
+           "and go to the player who is top 10 in more specifications (the more robust result), then to the one with more "
+           "pressure matches.", "p"))
 S.append(P(f"Final score(player) = (1/{N_SPECS}) x SUM over specs s of PRI<sub>s</sub>(player)", "formula"))
 
 # ------------------------------------------------------------------ 4. fair comparisons
@@ -573,7 +574,7 @@ S.append(P(f"The competition-specific ratings agree closely with the combined on
            f"{tier_s.spearman.min():.2f} to {tier_s.spearman.max():.2f}). Of the final top 10s, "
            f"{ipl_b.final_top10_in_tier_top10} of {ipl_b.final_top10_eligible} batters and {ipl_w.final_top10_in_tier_top10} "
            f"of {ipl_w.final_top10_eligible} bowlers with enough IPL pressure balls are also top 10 on IPL evidence alone. "
-           "Three picks rest mainly on T20I evidence (Daryl Mitchell, Mujeeb Ur Rahman, Mark Adair); they are flagged on "
+           "Three picks rest mainly on T20I evidence (Reeza Hendricks, Mujeeb Ur Rahman, Mark Adair); they are flagged on "
            "their player cards, as is Sooryavanshi, who has fewer than 100 pressure balls in either competition alone. "
            "Combining the competitions mainly adds sample size, which is why we keep both.", "small"))
 S.append(P("Why level and lift, not lift alone", "h2"))
@@ -598,7 +599,7 @@ for i, (pid, r) in enumerate(tb.head(10).iterrows(), 1):
 S.append(table(rows, [8, 31, 14, 22, 17, 18, 12, 13, 14, 13, 16]))
 S.append(P("SR (exp.) = strike rate under pressure vs what an average batter would score in exactly those situations. "
            "Outs (exp.) = dismissals vs the expected number. Lift = runs above own baseline per 100 pressure balls. "
-           "Consist. = share of pressure matches beating expectation. † dead heat, ordered by pressure matches. "
+           "Consist. = share of pressure matches beating expectation. † dead heat, ordered by share of specifications in the top 10, then pressure matches. "
            "IPL 2026 team = team in the data pack; 2027 status is on page 2 and in Section 8.", "small"))
 S.append(fig("f12_bat_dumbbell", 160))
 S.append(fig("f10_bat_strip", 168))
@@ -630,14 +631,14 @@ bat_notes = [
     ("Abhishek Sharma", "The highest normal-situation quality in the pool, but he <b>dips under pressure</b> (lift -8.6, "
      "56% consistency). He stays top 10 because even his dipped level is elite. Lowest-conviction pick above the cut."),
     ("Rinku Singh", "Dismissed only <b>6 times in 245 pressure balls against 15.7 expected</b> (average 68.7). Beat "
-     "expectation in <b>18 of 20 pressure matches (90%)</b>, the best consistency in the pool, and hit the winning runs in "
+     "expectation in <b>18 of 20 pressure matches (90%)</b>, the joint-best consistency in the pool (with Hendricks, on twice the matches), and hit the winning runs in "
      "5 extreme-pressure chases."),
-    ("Daryl Mitchell", "Strike rate 155 vs 137 expected, 6 dismissals vs 10.4 expected, lift +8.9. <b>Joint-10th</b> with "
-     "Harry Brook and Reeza Hendricks: a chained dead heat (Mitchell to Brook 0.009, Brook to Hendricks 0.005, both under "
-     "the 0.01 rule), so the slot goes on evidence (17 pressure matches vs 13 and 10). Hendricks has the higher raw score "
-     "and is top 10 in more specifications (59% vs 30%), but sits at the 10-match eligibility floor. "
-     "Brook is in any case banned from the IPL until the 2028 auction. "
-     "Unsold at the 2026 auction and in no IPL squad, so he is in the 2027 auction."),
+    ("Reeza Hendricks", "Strike rate 186 vs 152 expected and out 5 times vs 7.9 expected. Beat expectation in <b>9 of "
+     "his 10 pressure matches (90%)</b>, the joint-best consistency in the pool with Rinku. In a dead heat with Harry Brook "
+     "and Daryl Mitchell (all within 0.013); he has the highest score of the three and is top 10 in the most "
+     "specifications (59% vs 40% and 30%), so he takes the slot. The caveat: 10 pressure matches, the eligibility floor, "
+     "all in T20Is. Brook is banned from the IPL until the 2028 auction; Mitchell (#12) remains RR's best middle-order "
+     "auction buy (Section 8). In no IPL squad, so in the 2027 auction if he registers."),
 ]
 for n, t in bat_notes:
     S.append(Paragraph(f"<b>{n}.</b> {t}", st["bullet"], bulletText="\u2022"))
@@ -786,8 +787,8 @@ S += bullets([
     "6-10 as a tier rather than a strict order; the bootstrap intervals overlap.",
     "<b>Near the cut-off.</b> Sooryavanshi (119 pressure balls, 15 of them from A-team matches weighted at 0.5) is the "
     "biggest single risk in the lists: much of his score is his normal-situation level. Rinku Singh, Shreyas "
-    "Iyer, Daryl Mitchell and Mark Adair are top 10 in fewer than 60% of specifications, and Mitchell, Brook and "
-    "Hendricks are statistically level for 10th.",
+    "Iyer, Mark Adair and Reeza Hendricks are top 10 in fewer than 60% of specifications; Hendricks, Brook and Mitchell "
+    "are statistically level for 10th, and Hendricks rests on the minimum 10 pressure matches.",
     "<b>Model and data gaps.</b> The win-probability model ignores team strength, venue and toss (first-innings AUC 0.69); "
     "no fielding or match-up modelling; no T20 World Cups in the pack; 2027 auction prices are unknown.",
 ])
@@ -869,7 +870,7 @@ S.append(Spacer(1, 3))
 S.append(P(f"<b>Plan 1 adds about +{free_trio.wins.round(2).sum():.2f} wins a season</b> ({free_trio.wins.round(2).sum() / best_trio.wins.round(2).sum() * 100:.0f}% "
            f"of the best possible trio, whose members were all retained), with all {RR_OVERSEAS_SLOTS} overseas places. "
            "Two of the three went unsold at the 2026 auction and the third has never played in the IPL: the market has passed "
-           "on them, but their pressure records are top 10. "
+           "on them, but all three rank in the top 12 of all players under pressure. "
            "Keep: Sooryavanshi (#2) and Jaiswal (#4). Use carefully: Sandeep Sharma, Ravi Bishnoi and Shami in lower-leverage overs. "
            "Watch list: M Shahrukh Khan, an uncapped finisher released by GT, whose small sample would rank about #15 "
            "(Section 10).", "small"))
