@@ -781,6 +781,41 @@ t5.append(P("Role bias = how strongly a ranking simply follows the share of a pl
            "only one of the three that answers 'compared with their usual level' while staying reliable and fair. With about "
            "50 players per test, prediction differences under about 0.15 are within noise.", "small"))
 S.append(KeepTogether(t5))
+# ---- the questions a sceptical judge will ask, answered from the data
+_E = bowl[bowl.eligible]
+_ps = _E.groupby("pace_spin").pq.mean()
+_n_spin = int((bowl.loc[cons["bowl"].index[:10]].pace_spin == "Spin").sum())
+_tvx = tv.set_index(["role", "estimator"]).r_future_pressure_quality
+_bb = pd.read_pickle(f"{OUT}/balls.pkl")
+_mt = pd.read_pickle(f"{OUT}/matches.pkl")
+_tn = pd.concat([_mt.set_index("home_team_id").home_team, _mt.set_index("away_team_id").away_team])
+_tn = _tn[~_tn.index.duplicated()]
+_ad = _bb[(_bb.bowler_id == 5379) & (_bb.PI >= 1.5)].batting_team_id.map(_tn)
+_full = {"Afghanistan", "Australia", "Bangladesh", "England", "India", "New Zealand", "Pakistan", "South Africa",
+         "Sri Lanka", "West Indies"}
+_ad_full = _ad.isin(_full).mean()
+sq = [P("Questions a sceptic will ask", "h2")]
+sq += bullets([
+    f"<b>Home bias? Two RR batters are in the top 4.</b> The same rules rate every player; team and availability play no "
+    f"part in any rank. The same rules put RR's Sandeep Sharma #{crank['bowl'][2411]} of {int(bowl.eligible.sum())} bowlers "
+    f"and Ravi Bishnoi #{crank['bowl'][7503]}.",
+    f"<b>Why {_n_spin} spinners in the bowling top 10?</b> Across the whole pool, spinners beat expectation under pressure "
+    f"far more than pacers (average Pressure Quality {_ps['Spin']:+.1f} vs {_ps['Pace']:+.1f} runs per 100 balls). It is "
+    "not a role artefact: the ranking is only weakly tied to death-over share (Test 5).",
+    f"<b>Did Mark Adair only beat weak teams?</b> No: {_ad_full*100:.0f}% of his {len(_ad)} pressure balls came against "
+    "full-member nations (Afghanistan, South Africa, New Zealand, Bangladesh, India and others). Balls against associates "
+    "count half and against Zimbabwe three-quarters (Section 4).",
+    f"<b>Where are Klaasen and Buttler?</b> Klaasen is clearly worse than his own normal level under pressure (Lift "
+    f"{bat.lift[4260]:+.1f}, #{crank['bat'][4260]}); Buttler is #{crank['bat'][813]}, scoring only a little above an average "
+    "batter in the same spots (Section 10).",
+    f"<b>Is pressure skill even real?</b> Partly, and we say so. For bowlers, the pressure rating predicts later seasons' "
+    f"pressure performance better than normal form alone ({_tvx[('bowl', 'Pressure Quality (PRI core)')]:.2f} vs "
+    f"{_tvx[('bowl', 'Normal-situation quality only')]:.2f}). For batters it barely does "
+    f"({_tvx[('bat', 'Pressure Quality (PRI core)')]:.2f} vs {_tvx[('bat', 'Normal-situation quality only')]:.2f}): a batter "
+    "who is good under pressure is mostly a good batter. That is why the score leans on level under pressure, not on "
+    "Lift alone.",
+], small=True)
+S.append(KeepTogether(sq))
 S.append(P("Where the model is less certain", "h2"))
 S += bullets([
     "<b>Pressure skill is only partly persistent.</b> Even our best metric has a reliability of about 0.5. Treat ranks "
