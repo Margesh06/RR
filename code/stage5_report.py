@@ -18,6 +18,7 @@ FIG = f"{OUT}/fig"
 PINK, NAVY, INK, INK2, RULE, TINT = (colors.HexColor(h) for h in ("#E4087C", "#14254F", "#0b0b0b", "#52514e", "#dddcd6", "#f5f4f0"))
 BLUE = colors.HexColor("#2a78d6")
 DASH_URL = "https://rr-pressure-index-xi.vercel.app"
+CODE_URL = "https://github.com/Margesh06/RR"
 W, H = A4
 M = 16 * mm
 
@@ -160,7 +161,8 @@ def on_cover(c, doc):
     c.drawString(M, H - 70 * mm, "a context-adjusted rating, and tested top-10 lists, with an IPL 2027 auction lens.")
     c.setFont("Helvetica", 8.5)
     c.setFillColor(colors.HexColor("#c9d3ea"))
-    c.drawString(M, H - 82 * mm, "818 matches  •  195,124 deliveries  •  IPL 2022-26 + T20Is 2022-26  •  fully reproducible Python pipeline")
+    c.drawString(M, H - 82 * mm, "818 matches  •  195,124 deliveries  •  IPL 2022-26 + T20Is 2022-26  •  code: " + CODE_URL.replace("https://", ""))
+    c.linkURL(CODE_URL, (M, H - 84 * mm, W - M, H - 79 * mm), relative=0)
     c.setFillColor(colors.white)
     c.setFont("Helvetica-Bold", 10)
     c.drawRightString(W - M, H - 20 * mm, "Prepared by Margesh")
@@ -403,7 +405,7 @@ S.append(P("The pack contains 883 matches. We drop 40 abandoned or no-result gam
            "DLS targets break the state model; the two sets overlap, so 65 matches are removed in total. That leaves "
            "<b>818 matches</b>: 357 IPL (2022-26), 431 T20Is and 30 A-team fixtures (Emerging Asia Cup 2024, Rising "
            "Stars 2025). Super overs are excluded from ratings. Every number in this report is reproduced by the "
-           "Python scripts listed in Appendix B."))
+           f"Python scripts listed in Appendix B, published at <link href='{CODE_URL}' color='#E4087C'><u>{CODE_URL.replace('https://', '')}</u></link>."))
 
 # ------------------------------------------------------------------ 2. pressure definition
 S.append(PageBreak())
@@ -1077,7 +1079,7 @@ S.append(PageBreak())
 S.append(P("APPENDIX", "kick"))
 S.append(P("A. Win-probability calibration", "h2"))
 S.append(fig("f9_calibration", 72))
-S.append(P("B. Reproducibility", "h2"))
+S.append(P(f"B. Reproducibility: code and run steps at <link href='{CODE_URL}' color='#E4087C'><u>{CODE_URL.replace('https://', '')}</u></link>", "h2"))
 S.append(table([["Script", "What it does"],
                 ["stage1_models.py", "State engine, WP models (CV-validated), expected-runs model, attribution of WPA and run value, Leverage and Pressure Index"],
                 ["stage2_ratings.py", "Expectation models, component shrinkage, PRI, eligibility, split-half reliability, bootstrap. Optional window and parameter overrides for validation and sensitivity runs"],
