@@ -526,6 +526,22 @@ S.append(P("Every modelling choice above is defensible, but none is uniquely rig
            "and go to the player who is top 10 in more specifications (the more robust result), then to the one with more "
            "pressure matches.", "p"))
 S.append(P(f"Final score(player) = (1/{N_SPECS}) x SUM over specs s of PRI<sub>s</sub>(player)", "formula"))
+# ---- worked example: one player from raw balls to score
+_r = bat.loc[6396]
+_pool = bat[bat.eligible]
+_z = {c: (_r[c] - _pool[c].mean()) / _pool[c].std() for c in ("pq", "succ_s", "lift", "wpa_s")}
+we = [["Step", "Tim David (batter #1)", "What it means"],
+      ["1. Pressure balls", f"{int(_r.n_p)} balls in {int(_r.p_matches)} tense matches", "Balls with Pressure Index 1.5 or more"],
+      ["2. Raw level under pressure", f"{_r.q_p_raw:+.1f} runs per 100 balls", "vs an average batter in the same situations; each dismissal counts as runs lost"],
+      ["3. Usual level (normal balls)", f"{_r.q_base:+.1f}", "his normal-ball level, shrunk toward the league average"],
+      ["4. Level under pressure, as used", f"{_r.pq:+.1f} = ({_r.q_p_raw:.1f} x {int(_r.n_p)} + {_r.q_base:.1f} x 500) / ({int(_r.n_p)} + 500)",
+       "pressure evidence weighed against his usual level (500-ball prior)"],
+      ["5. Lift", f"{_r.lift:+.1f}", "step 4 minus step 3: better under pressure than usual"],
+      ["6. Consistency and win impact", f"{_r.succ_raw*100:.0f}% of tense games (shrunk {_r.succ_s*100:.0f}%); {_r.wpa_s:+.1f}", "share of tense games beating expectation; win probability added"],
+      ["7. Score (one specification)", f"0.45 x {_z['pq']:.2f} + 0.20 x {_z['succ_s']:.2f} + 0.20 x {_z['lift']:.2f} + 0.15 x {_z['wpa_s']:.2f} = {_r.PRI:+.2f}",
+       "each part as a z-score against all eligible batters"],
+      ["8. Final score", f"{cons['bat'].consensus_PRI[6396]:+.2f}", f"the average of the step-7 score over all {N_SPECS} specifications"]]
+S.append(KeepTogether([P("Worked example: from raw balls to a final score", "h2"), table(we, [40, 72, 66])]))
 
 # ------------------------------------------------------------------ 4. fair comparisons
 S.append(Spacer(1, 10))
@@ -556,7 +572,11 @@ S.append(table([["Issue", "How we handle it"],
                 ["<b>Attribution</b>", "Batters are credited with runs off the bat and their own dismissal only (a "
                  "non-striker run-out is not charged to the striker). Bowlers are charged bat runs, wides and no-balls, "
                  "and credited with wickets except run-outs."],
-                ["<b>Excluded data</b>", "Rain-reduced (DLS) matches, abandoned and no-result games, and super overs."]],
+                ["<b>Excluded data</b>", "Rain-reduced (DLS) matches, abandoned and no-result games, and super overs."],
+                ["<b>Data checks</b>", "Extras are counted with their real runs (wides, no-balls, byes, leg-byes). Rebuilt totals "
+                 "reproduce the winner of 99.6% of the 747 decided matches and the exact winning margin in 99.5% of matches won "
+                 "by runs; no duplicate deliveries; A-team fixtures are their own tier, not IPL; players are matched by ID, "
+                 "so the two Rashid Khans stay separate."]],
                [36, 142]))
 S.append(Spacer(1, 6))
 S.append(P("Who is in the eligible pool", "h2"))
