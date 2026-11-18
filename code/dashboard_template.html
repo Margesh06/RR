@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pressure Reliability Index</title>
+<meta name="description" content="The 10 most reliable batters and bowlers under pressure, and what they mean for Rajasthan Royals at the IPL 2027 auction. Prepared by Margesh.">
+<style>
+:root {
+  --pink: #E4087C; --navy: #14254F;
+  --bg: #f5f5f2; --surface: #ffffff; --soft: #f3f2ee; --ink: #111111; --ink2: #55544f; --muted: #8d8c86;
+  --rule: #e8e7e2; --blue: #2a78d6; --blue-soft: #e5effb; --blue-mid: #9ec5f4; --orange: #eb6834; --gray: #cfcec7;
+  --pink-soft: #fde8f2; --tip-bg: #14181f; --tip-ink: #f4f3ee; --tip-ink2: #b9b8b1;
+  --shadow: 0 12px 32px rgba(20, 24, 31, .16), 0 2px 6px rgba(20, 24, 31, .06);
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1013; --surface: #17181c; --soft: #1f2025; --ink: #f2f1ec; --ink2: #b7b5ae; --muted: #85837c;
+    --rule: #2a2b31; --blue: #4b94ec; --blue-soft: #16273d; --blue-mid: #2f5c90; --orange: #f07c4c; --gray: #44454b;
+    --pink-soft: #3d1028; --tip-bg: #f4f3ee; --tip-ink: #14181f; --tip-ink2: #55544f; --shadow: 0 12px 32px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1013; --surface: #17181c; --soft: #1f2025; --ink: #f2f1ec; --ink2: #b7b5ae; --muted: #85837c;
+  --rule: #2a2b31; --blue: #4b94ec; --blue-soft: #16273d; --blue-mid: #2f5c90; --orange: #f07c4c; --gray: #44454b;
+  --pink-soft: #3d1028; --tip-bg: #f4f3ee; --tip-ink: #14181f; --tip-ink2: #55544f; --shadow: 0 12px 32px rgba(0,0,0,.5);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+/* header */
+header.top { background: #14254F; color: #fff; }
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding-top: 28px; flex-wrap: wrap; }
+.kicker { font-size: 11.5px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #f59cc8; }
+h1 { margin: 6px 0 6px; font-size: 30px; line-height: 1.15; letter-spacing: -.01em; }
+.sub { color: #c9d3ea; font-size: 15px; max-width: 620px; }
+.headright { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.byline { font-weight: 700; font-size: 13.5px; }
+.ghost { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.22); color: #fff; border-radius: 10px; padding: 8px 13px; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.ghost:hover { background: rgba(255,255,255,.16); }
+nav.tabs { display: flex; gap: 2px; margin-top: 22px; overflow-x: auto; }
+nav.tabs button { background: transparent; border: 0; color: #c9d3ea; padding: 11px 16px; font-size: 14.5px; font-weight: 600; border-radius: 10px 10px 0 0; cursor: pointer; white-space: nowrap; }
+nav.tabs button[aria-selected="true"] { background: var(--bg); color: var(--ink); }
+.pinkline { height: 3px; background: var(--pink); }
+main.wrap { padding-top: 26px; padding-bottom: 60px; }
+section[hidden] { display: none; }
+
+/* basic blocks */
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 22px; margin-bottom: 18px; }
+h2 { font-size: 19px; margin: 0 0 4px; letter-spacing: -.005em; display: flex; align-items: center; }
+h3 { font-size: 15px; margin: 0 0 8px; display: flex; align-items: center; }
+.lead { color: var(--ink2); margin: 0 0 16px; font-size: 14.5px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.explain { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--pink); border-radius: var(--r); padding: 16px 18px; margin-bottom: 18px; font-size: 14.5px; color: var(--ink2); }
+.explain b { color: var(--ink); }
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.seg { display: inline-flex; background: var(--soft); border-radius: 11px; padding: 4px; }
+.seg button { border: 0; background: transparent; color: var(--ink2); font-size: 14px; font-weight: 600; padding: 7px 16px; border-radius: 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--rule); background: var(--surface); border-radius: 10px; padding: 9px 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn:hover { background: var(--soft); }
+input[type=search], select { font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 8px 12px; }
+input[type=search] { min-width: 220px; }
+
+/* info icon + tooltip */
+.info { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; border: 1.4px solid currentColor; color: var(--muted); font: italic 700 10px/1 Georgia, serif; cursor: help; margin-left: 7px; padding: 0; background: transparent; flex: none; }
+.info:hover, .info:focus-visible, .info.on { color: var(--pink); outline: none; }
+.th .info { width: 14px; height: 14px; font-size: 9px; margin-left: 5px; }
+.tt { position: fixed; z-index: 90; max-width: 300px; pointer-events: none; opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s; border-radius: 12px; box-shadow: var(--shadow); font-size: 13px; line-height: 1.45; left: -999px; top: -999px; }
+.tt.show { opacity: 1; transform: none; }
+.tt::after { content: ""; position: absolute; left: var(--ax, 50%); width: 10px; height: 10px; transform: translateX(-50%) rotate(45deg); background: inherit; }
+.tt:not(.below)::after { bottom: -5px; }
+.tt.below::after { top: -5px; }
+.tt.concept { background: var(--tip-bg); color: var(--tip-ink); padding: 12px 14px 13px; }
+.tt.concept .t { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
+.tt.concept .ex { margin-top: 7px; color: var(--tip-ink2); }
+.tt.concept .ex b { color: var(--tip-ink); }
+.tt .dir { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 99px; background: rgba(228, 8, 124, .22); color: #ff8cc6; }
+.tt.data { background: var(--surface); color: var(--ink); border: 1px solid var(--rule); min-width: 230px; }
+.tt.data:not(.below)::after { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: var(--soft); }
+.tt.data.below::after { border-left: 1px solid var(--rule); border-top: 1px solid var(--rule); }
+.tt.data .h { padding: 10px 13px 8px; }
+.tt.data .h b { font-size: 13.5px; }
+.tt.data .h span { display: block; color: var(--muted); font-size: 12px; }
+.tt.data .rows { padding: 6px 13px 8px; border-top: 1px solid var(--rule); }
+.tt.data .r { display: flex; align-items: center; gap: 8px; padding: 2px 0; }
+.tt.data .r .lab { color: var(--ink2); flex: 1; }
+.tt.data .r b { font-variant-numeric: tabular-nums; }
+.tt.data .r.stack { display: block; }
+.tt.data .r.stack .lab { display: block; font-size: 12px; }
+.tt.data .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.tt.data .f { padding: 9px 13px 11px; border-top: 1px solid var(--rule); color: var(--ink2); background: var(--soft); border-radius: 0 0 12px 12px; }
+.tt.data .f b { color: var(--ink); }
+
+/* leaderboard */
+.board { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); overflow: hidden; }
+.lb-grid { display: grid; grid-template-columns: 52px minmax(200px, 1.5fr) minmax(190px, 1.3fr) 150px 112px 24px; align-items: center; gap: 14px; padding: 0 18px; }
+.th { background: var(--soft); font-size: 12px; font-weight: 700; color: var(--ink2); padding-top: 10px; padding-bottom: 10px; text-transform: none; }
+.th > div { display: flex; align-items: center; }
+.lb-row { border-top: 1px solid var(--rule); padding-top: 14px; padding-bottom: 14px; cursor: pointer; transition: background .1s; }
+.lb-row:hover { background: var(--soft); }
+.lb-row:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.rank { font-size: 22px; font-weight: 800; color: var(--ink); line-height: 1; }
+.rank small { display: block; font-size: 10.5px; font-weight: 600; color: var(--muted); margin-top: 3px; letter-spacing: .02em; }
+.pname { font-weight: 700; font-size: 15.5px; line-height: 1.25; }
+.pmeta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.chip { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 99px; margin-left: 7px; vertical-align: 1px; background: var(--soft); color: var(--ink2); cursor: help; }
+.chip.rr { background: var(--pink-soft); color: var(--pink); }
+.chip.free { background: var(--blue-soft); color: var(--blue); }
+.gain .val { font-weight: 700; font-size: 14.5px; }
+.gain .val span { font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.track { height: 7px; border-radius: 4px; background: var(--soft); margin-top: 6px; overflow: hidden; }
+.track i { display: block; height: 100%; border-radius: 4px; background: var(--blue); }
+.deliv .val { font-weight: 700; font-size: 14.5px; }
+.deliv .val span { font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.pips { display: flex; gap: 2px; margin-top: 7px; flex-wrap: wrap; max-width: 140px; }
+.pips i { width: 5px; height: 7px; border-radius: 2px; background: var(--gray); }
+.pips i.y { background: var(--blue); }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 99px; white-space: nowrap; cursor: help; }
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.badge.s3 { background: var(--blue-soft); color: var(--blue); }
+.badge.s2 { background: var(--soft); color: var(--blue); }
+.badge.s1 { background: var(--soft); color: var(--ink2); }
+.badge.s0 { background: var(--soft); color: var(--muted); }
+.mline { display: none; font-size: 13px; margin-top: 5px; color: var(--ink2); }
+.mline b { color: var(--ink); }
+.chev { color: var(--muted); font-size: 20px; text-align: right; }
+.backup-head { padding: 14px 18px; background: var(--pink-soft); border-top: 2px solid var(--pink); border-bottom: 1px solid var(--rule); font-size: 13.5px; color: var(--ink2); line-height: 1.5; }
+.backup-head b.t { display: block; color: var(--ink); font-size: 15px; margin-bottom: 2px; }
+.lb-row.backup { background: var(--surface); }
+.lb-row.backup .pname { font-weight: 500; }
+.rolegroups { padding: 12px 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.rolegroups b { color: var(--ink); }
+.below-board { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 18px; border-top: 1px solid var(--rule); background: var(--surface); }
+.next { font-size: 13.5px; color: var(--ink2); }
+.next b { color: var(--ink); font-weight: 600; }
+
+/* stat tiles */
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+.tile { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 18px 20px; }
+.tile .k { font-size: 13px; color: var(--ink2); display: flex; align-items: center; }
+.tile .v { font-size: 30px; font-weight: 800; letter-spacing: -.01em; margin: 4px 0 2px; }
+.tile .n { font-size: 13px; color: var(--muted); }
+.hero { font-size: 22px; font-weight: 700; line-height: 1.3; margin: 0 0 6px; letter-spacing: -.01em; }
+.hero em { font-style: normal; color: var(--pink); }
+
+/* RR wins columns */
+.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.col { background: var(--soft); border-radius: 12px; padding: 16px; }
+.col h3 { margin-bottom: 2px; }
+.col .need { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+.wrow { padding: 8px 0; border-top: 1px solid var(--rule); cursor: pointer; }
+.wrow:first-of-type { border-top: 0; }
+.wrow .top { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.wrow .top b { font-weight: 600; }
+.wrow .top span { font-weight: 700; color: var(--blue); white-space: nowrap; }
+.wrow .track { background: var(--surface); }
+.wrow:hover .top b { text-decoration: underline; }
+.note-card { display: block; margin-top: 14px; padding: 12px 14px; border-radius: 12px; border: 1px dashed var(--rule); color: var(--ink2); font-size: 14px; }
+.plan { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.plan .p { border: 1px solid var(--rule); border-radius: 12px; padding: 16px; background: var(--surface); }
+.plan .p h3 { font-size: 14px; margin-bottom: 10px; }
+.plan .p h3 .dotc { width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; }
+.plan ul { list-style: none; margin: 0; padding: 0; }
+.plan li { padding: 7px 0; border-top: 1px solid var(--rule); font-size: 13.5px; color: var(--ink2); }
+.plan li:first-child { border-top: 0; padding-top: 0; }
+.plan li b { display: block; color: var(--ink); font-size: 14px; }
+
+/* beyond-the-top-10 lists */
+.xlist { border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+.xrow { display: grid; grid-template-columns: minmax(180px, 1.3fr) 1.4fr 1.6fr; gap: 14px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--rule); }
+.xrow:first-child { border-top: 0; }
+.xrow.click { cursor: pointer; }
+.xrow.click:hover { background: var(--soft); }
+.xrow .big2 { font-weight: 700; font-size: 14.5px; }
+.xrow .sub2 { color: var(--muted); font-size: 12.5px; }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; background: var(--soft); color: var(--ink2); }
+.pill.good { background: var(--blue-soft); color: var(--blue); }
+.pill.warn { background: #fdeee6; color: var(--orange); }
+:root[data-theme="dark"] .pill.warn { background: #3a2116; }
+
+/* all-players table */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th { text-align: left; font-size: 12px; font-weight: 700; color: var(--ink2); background: var(--soft); padding: 10px 12px; white-space: nowrap; }
+thead th > span { display: inline-flex; align-items: center; }
+tbody td { padding: 11px 12px; border-top: 1px solid var(--rule); white-space: nowrap; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--soft); }
+tbody tr.cut td { border-bottom: 2px solid var(--pink); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--r); background: var(--surface); }
+
+/* how we did it */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+.step { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 18px; }
+.step .num { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; background: var(--pink); color: #fff; font-size: 13px; font-weight: 800; align-items: center; justify-content: center; margin-bottom: 10px; }
+.step b { display: block; font-size: 15px; margin-bottom: 4px; }
+.step p { margin: 0; color: var(--ink2); font-size: 14px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 14px; }
+label.ctl { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--ink2); }
+label.ctl > span { display: flex; align-items: center; }
+.result { background: var(--soft); border-radius: 12px; padding: 14px 16px; font-size: 14.5px; margin-bottom: 12px; }
+.result b { color: var(--ink); }
+.mini { columns: 2; column-gap: 28px; }
+.mini div { break-inside: avoid; }
+.mini div { display: flex; justify-content: space-between; padding: 7px 0; border-top: 1px solid var(--rule); font-size: 14px; }
+.mini .mv { font-weight: 700; font-size: 13px; }
+.up { color: var(--blue); } .down { color: var(--orange); } .same { color: var(--muted); }
+details.gl summary { cursor: pointer; font-weight: 700; font-size: 16px; list-style: none; display: flex; justify-content: space-between; }
+details.gl summary::after { content: "Show"; font-size: 13px; color: var(--ink2); font-weight: 600; }
+details.gl[open] summary::after { content: "Hide"; }
+dl.gloss { display: grid; grid-template-columns: 220px 1fr; margin: 14px 0 0; }
+dl.gloss dt { font-weight: 700; padding: 10px 12px 10px 0; border-top: 1px solid var(--rule); font-size: 14px; }
+dl.gloss dd { margin: 0; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 14px; color: var(--ink2); }
+dl.gloss dd .ex { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+svg text { fill: var(--ink2); font-size: 12px; }
+svg .lbl { fill: var(--ink); }
+svg rect.hit { cursor: pointer; }
+svg rect.hit:hover { fill: var(--soft); }
+
+/* drawer */
+.dbg { position: fixed; inset: 0; background: rgba(10, 12, 18, .4); opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 30; }
+.dbg.open { opacity: 1; pointer-events: auto; }
+aside.drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(540px, 100%); background: var(--bg); z-index: 40; transform: translateX(100%); transition: transform .22s ease; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,.18); }
+aside.drawer.open { transform: none; }
+.dh { background: #14254F; color: #fff; padding: 22px 24px 20px; position: sticky; top: 0; z-index: 2; border-bottom: 3px solid var(--pink); }
+.dh .kicker { color: #f59cc8; }
+.dh h3 { font-size: 24px; margin: 4px 0 2px; display: block; }
+.dh .meta { color: #c9d3ea; font-size: 13.5px; }
+.dclose { position: absolute; top: 14px; right: 16px; background: rgba(255,255,255,.1); border: 0; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+.db { padding: 20px 24px 36px; }
+.inshort { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 14px 16px; font-size: 15px; margin-bottom: 14px; }
+.big { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.bt { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 14px 16px; }
+.bt .k { font-size: 12.5px; color: var(--ink2); display: flex; align-items: center; }
+.bt .v { font-size: 30px; font-weight: 800; letter-spacing: -.01em; line-height: 1.15; margin-top: 4px; }
+.bt .n { font-size: 12.5px; color: var(--muted); }
+.sect { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r); padding: 14px 16px; margin-bottom: 12px; }
+.sect h3 { font-size: 14px; }
+.fit { background: var(--pink-soft); border-color: transparent; }
+details.more summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ink2); padding: 6px 0; }
+.legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--ink2); margin: 0 0 6px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+/* modal */
+.mbg { position: fixed; inset: 0; background: rgba(10,12,18,.5); z-index: 60; display: none; align-items: center; justify-content: center; padding: 16px; }
+.mbg.open { display: flex; }
+.modal { background: var(--surface); border-radius: 16px; max-width: 640px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 26px 28px; box-shadow: var(--shadow); position: relative; }
+.modal h2 { font-size: 21px; }
+.modal ol { padding-left: 0; list-style: none; margin: 16px 0 0; counter-reset: s; }
+.modal li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 6px; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 14.5px; color: var(--ink2); }
+.modal li::before { content: counter(s); width: 26px; height: 26px; border-radius: 50%; background: var(--pink); color: #fff; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.modal li b { color: var(--ink); }
+.modal .x { position: absolute; top: 14px; right: 16px; background: var(--soft); border: 0; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; color: var(--ink2); }
+footer { color: var(--muted); font-size: 12.5px; text-align: center; padding: 0 16px 34px; }
+
+@media (max-width: 860px) {
+  .lb-grid { grid-template-columns: 34px 1fr 16px; gap: 10px; padding: 0 14px; }
+  .lb-grid .c-deliv, .lb-grid .c-gain, .lb-grid .c-sure { display: none; }
+  .mline { display: block; }
+  .pname { font-size: 15px; }
+  .bt .v { font-size: 23px; }
+  .rank { font-size: 19px; }
+  .cols3, .plan, .steps, .grid2, .tiles { grid-template-columns: 1fr; }
+  .mini { columns: 1; }
+  h1 { font-size: 23px; }
+  .headright { align-items: flex-start; }
+  dl.gloss { grid-template-columns: 1fr; }
+  dl.gloss dt { padding-bottom: 0; }
+  dl.gloss dd { border-top: 0; }
+  .hide-sm { display: none; }
+  .xrow { grid-template-columns: 1fr; gap: 4px; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap head">
+    <div>
+      <div class="kicker">SupeRR Selector Season 2 · Rajasthan Royals</div>
+      <h1>Who delivers when the game is on the line?</h1>
+      <div class="sub">The 10 most reliable batters and bowlers under pressure, and an auction board of the 20 best players Rajasthan Royals can actually buy at the IPL 2027 auction.</div>
+    </div>
+    <div class="headright">
+      <div class="byline">Prepared by Margesh</div>
+      <button class="ghost" id="guideBtn">How to read this page</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="top" aria-selected="true">Top 10</button>
+      <button role="tab" data-tab="rr" aria-selected="false">For Rajasthan Royals</button>
+      <button role="tab" data-tab="beyond" aria-selected="false">Beyond the top 10</button>
+      <button role="tab" data-tab="all" aria-selected="false">All players</button>
+      <button role="tab" data-tab="how" aria-selected="false">How we did it</button>
+    </nav>
+  </div>
+  <div class="pinkline"></div>
+</header>
+
+<main class="wrap">
+  <!-- ============ TOP 10 ============ -->
+  <section id="tab-top">
+    <div class="explain">
+      <div><b>Pressure</b> means the moments when the next ball could swing the match: about 1 ball in 5. We rated every player on those moments, comparing what he did with what an average player would have done in exactly the same situation. Our top 10 ranks every player. Many were kept by their teams for 2027, so below it is the <b>RR auction board</b>: the 20 best players RR can actually buy on 16 December, with a backup order if a pick is missed. Click any player to see why he is on the list.</div>
+      <button class="info" type="button" data-g="pressure" aria-label="What is pressure?">i</button>
+    </div>
+    <div class="row-between">
+      <div class="seg" id="topSeg"><button data-role="bat" aria-pressed="true">Batters</button><button data-role="bowl" aria-pressed="false">Bowlers</button></div>
+      <div class="small muted" id="topCount"></div>
+    </div>
+    <div class="board" id="board"></div>
+    <div class="explain" style="margin-top:26px">
+      <div><b>RR auction board.</b> The same ratings, ranked only among players in no IPL 2027 squad (official retention lists, 17 Nov 2026), so RR can bid for every name here. Above the pink bar: first-choice targets. Below it: the backup order. If a pick is missed (another team outbids RR, he does not register, or the price is too high), take the next name with the same role.</div>
+      <button class="info" type="button" data-g="backup" aria-label="About the auction board">i</button>
+    </div>
+    <div class="board" id="board2"></div>
+  </section>
+
+  <!-- ============ FOR RR ============ -->
+  <section id="tab-rr" hidden>
+    <div class="card">
+      <p class="hero">RR's openers already deliver under pressure. <em>The wins RR is missing are in the middle order and the bowling.</em></p>
+      <p class="lead" style="margin:0">So the auction priority is a middle-order batter, a pace bowler and a spinner, not another opener.</p>
+    </div>
+    <div class="tiles">
+      <div class="tile"><div class="k">Close games won, 2025-26<button class="info" type="button" data-g="closegames" aria-label="What is a close game?">i</button></div><div class="v">3 of 10</div><div class="n">30%: the lowest win rate of the 10 IPL teams</div></div>
+      <div class="tile"><div class="k">RR's auction budget<button class="info" type="button" data-g="rr27" aria-label="About RR's auction budget">i</button></div><div class="v" id="purseV">-</div><div class="n" id="purseN">-</div></div>
+      <div class="tile"><div class="k">Best three buys in the auction add<button class="info" type="button" data-g="wins" aria-label="What are wins added?">i</button></div><div class="v" id="trioV">-</div><div class="n" id="trioN">-</div></div>
+    </div>
+    <div class="card">
+      <h2>Which pick adds the most wins for RR?<button class="info" type="button" data-g="wins" aria-label="What are wins added?">i</button></h2>
+      <p class="lead">Extra wins per season if the player took over the pressure balls that went to RR's weaker players in that role in 2026. Our top 10s plus the best players in the auction pool. <b>In auction</b> = RR can actually buy him on 16 December. Click a name to see the player.</p>
+      <div class="cols3" id="winsCols"></div>
+      <div class="note-card"><b>Top-order batters</b> (Phil Salt, Abhishek Sharma) add almost nothing (+0.01): RR's openers Jaiswal and Sooryavanshi already win those balls.</div>
+    </div>
+    <div class="card">
+      <h2>2027 auction plan<button class="info" type="button" data-g="plan" aria-label="About the auction plan">i</button></h2>
+      <p class="lead">Built on the official retention lists of 17 Nov 2026. Every player below is in the 16 December auction pool. RR have <b id="planBudget"></b>.</p>
+      <div class="plan">
+        <div class="p"><h3><span class="dotc" style="background:var(--blue)"></span>1. Bid first</h3><ul id="planFirst"></ul></div>
+        <div class="p"><h3><span class="dotc" style="background:var(--blue-mid)"></span>2. Back-ups</h3><ul id="planBackup"></ul></div>
+        <div class="p"><h3><span class="dotc" style="background:var(--pink)"></span>Keep · new at RR</h3><ul>
+          <li><b>Vaibhav Sooryavanshi</b>#2 batter</li>
+          <li><b>Yashasvi Jaiswal</b>#4 batter, top 10 in every test</li>
+          <li><b>Mohammed Shami</b>Traded in from LSG. Gets worse under pressure: best used with the new ball</li></ul></div>
+        <div class="p"><h3><span class="dotc" style="background:var(--gray)"></span>Use more carefully</h3><ul>
+          <li><b>Sandeep Sharma</b>Much worse under pressure than normally</li>
+          <li><b>Ravi Bishnoi</b>Same pattern: give them the less tense overs</li>
+          <li><b>Gone on 17 Nov</b>Sam Curran (traded to LSG), Shimron Hetmyer and Tushar Deshpande (released)</li></ul></div>
+      </div>
+      <div class="note-card" id="planNote"></div>
+    </div>
+    <div class="card">
+      <h2>Can RR buy our top 10?<button class="info" type="button" data-g="route" aria-label="What does route mean?">i</button></h2>
+      <p class="lead">Our top 10s rank who performs best under pressure, as the brief asks. Under IPL rules, a player his team kept is not in the auction. From the official IPL 2027 retention lists, published on <span id="asOf"></span>.</p>
+      <div class="grid2" id="routeCols"></div>
+    </div>
+    <div class="card">
+      <h2>Next in line<button class="info" type="button" data-g="route" aria-label="What does route mean?">i</button></h2>
+      <p class="lead">Ranks 11 to 20 on the auction board: the backup order if a target is missed or costs too much.</p>
+      <div class="xlist" id="auctionList"></div>
+      <div class="note-card">Not available: <b>Harry Brook</b> (#11 of all batters) is banned from the IPL until the 2028 auction; <b>Andre Russell</b> and <b>MS Dhoni</b> have retired as IPL players.</div>
+    </div>
+    <div class="card">
+      <h2>Close games won, IPL 2025-26<button class="info" type="button" data-g="closegames" aria-label="What is a close game?">i</button></h2>
+      <p class="lead">In the tensest third of games, RR won 3 of 10 (30%), the lowest win rate of any team. RCB won 9 of 10. Small samples, but the pattern matches RR's pressure-bowling and finishing numbers.</p>
+      <div id="closeChart"></div>
+    </div>
+  </section>
+
+  <!-- ============ BEYOND THE TOP 10 ============ -->
+  <section id="tab-beyond" hidden>
+    <div class="card">
+      <h2>Hidden gems: a watch list for the auction<button class="info" type="button" data-g="gems" aria-label="What is a hidden gem?">i</button></h2>
+      <p class="lead">Promising players with too few pressure balls to make our ranked list yet. Their numbers are already pulled toward their normal level, so these are cautious estimates.</p>
+      <div class="xlist" id="gemList"></div>
+      <div class="note-card"><b>Why it matters for RR:</b> every gem here is in the auction pool. <b>M Shahrukh Khan</b> is an uncapped Indian finisher released by GT: out 2 times where an average batter would be out 6, in the middle-order slot where RR loses wins, and he needs no overseas place. Uncapped players have a much lower base price than stars. Like Season 1's Vignesh Puthur, they are worth tracking now.</div>
+    </div>
+    <div class="card">
+      <h2>Young and uncapped: who already handles pressure?<button class="info" type="button" data-g="young" aria-label="About this list">i</button></h2>
+      <p class="lead">Uncapped Indian players aged 25 or under (confirmed ages and cap status, 17 Nov 2026) with at least 40 pressure balls. Small samples: early signals, not rankings. The youngest player in the full ranking, Vaibhav Sooryavanshi (15), is already capped and already at RR. Abishek Porel was released by DC, so he is the one in the auction.</p>
+      <div class="xlist" id="youngList"></div>
+    </div>
+    <div class="card">
+      <h2>Don't pay for a pressure reputation<button class="info" type="button" data-g="dip" aria-label="What does this list mean?">i</button></h2>
+      <p class="lead">Strong players in normal games whose output clearly drops under pressure, each with at least 200 pressure balls of evidence. Click a name for the full picture.</p>
+      <div class="xlist" id="dipList"></div>
+    </div>
+    <div class="card">
+      <h2>Why isn't he in our top 10?<button class="info" type="button" data-g="famous" aria-label="About this list">i</button></h2>
+      <p class="lead">The answer for well-known names, straight from the data. Click a name for the full picture.</p>
+      <div class="xlist" id="famList"></div>
+    </div>
+  </section>
+
+  <!-- ============ ALL PLAYERS ============ -->
+  <section id="tab-all" hidden>
+    <div class="row-between">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div class="seg" id="allSeg"><button data-role="bat" aria-pressed="true">Batters</button><button data-role="bowl" aria-pressed="false">Bowlers</button></div>
+        <input type="search" id="q" placeholder="Search a player" aria-label="Search a player">
+      </div>
+      <div class="small muted">Pink line = top-10 cut · click a player for details</div>
+    </div>
+    <div class="tablewrap"><table id="allTable"></table></div>
+    <p class="small muted" style="margin-top:10px">Pakistan players are not ranked because they cannot be bought at the IPL auction.</p>
+  </section>
+
+  <!-- ============ HOW WE DID IT ============ -->
+  <section id="tab-how" hidden>
+    <div class="steps">
+      <div class="step"><span class="num">1</span><b>Find the pressure balls</b><p>For every ball since 2022 we estimate each team's chance of winning. A pressure ball is one where the next delivery can swing that chance a lot.</p></div>
+      <div class="step"><span class="num">2</span><b>Compare with an average player</b><p>We compare what each player did with what an average player would have done in exactly the same situation, and with his own normal level.</p></div>
+      <div class="step"><span class="num">3</span><b>Check it's skill, not luck</b><p>We only trust a measure that gives the same answer on two random halves of a player's matches.</p></div>
+      <div class="step"><span class="num">4</span><b>Test 288 versions</b><p>We changed every judgement call and averaged the results, so no single choice decides the list.</p></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Is it skill or luck?<button class="info" type="button" data-g="reliability" aria-label="What is reliability?">i</button></h2>
+        <p class="lead">How well each measure agrees with itself across two random halves of a player's matches (1 = always, 0 = pure luck).</p>
+        <div id="relChart"></div>
+        <p class="small" style="margin:10px 0 0">For batters, the usual "clutch" stat is almost pure luck (0.05); <b>ours reaches 0.51</b>. For bowlers, <b>ours is about twice as reliable</b>.</p>
+      </div>
+      <div class="card">
+        <h2>Does mixing IPL and T20Is change the answer?<button class="info" type="button" data-g="rankcorr" aria-label="About agreement">i</button></h2>
+        <p class="lead">We rated everyone again on IPL games only, then on T20Is only.</p>
+        <div id="tierBox"></div>
+        <p class="small" style="margin:10px 0 0">The order barely changes. <b>Using both mainly gives us more evidence per player.</b></p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Is this better than the usual approach?<button class="info" type="button" data-g="h2h" aria-label="About this comparison">i</button></h2>
+      <p class="lead">Most analyses call the death overs "pressure" and rank by strike rate or economy, or by "under pressure minus normal". We tested all three on the same players.</p>
+      <div class="tablewrap" style="border:0"><table id="h2h"></table></div>
+      <p class="small" style="margin:10px 0 0"><b>In plain words:</b> the usual "compared with his normal level" approach is pure noise for bowlers and mostly rewards finishers for batters. Ours is the only one that makes that comparison while staying reliable and fair. Plain economy looks stable for bowlers mainly because it punishes anyone who bowls at the death.</p>
+    </div>
+    <div class="card">
+      <h2>Try it yourself: change our settings<button class="info" type="button" data-g="lab" aria-label="About the settings">i</button></h2>
+      <p class="lead">Every analysis has judgement calls. Change any of them and see whether our top 10 survives.</p>
+      <div class="controls">
+        <div class="seg" id="labSeg"><button data-role="bat" aria-pressed="true">Batters</button><button data-role="bowl" aria-pressed="false">Bowlers</button></div>
+        <label class="ctl"><span>How tense counts as pressure<button class="info" type="button" data-g="lab_threshold" aria-label="About this setting">i</button></span><select id="cP"><option value="0">Wider (1 ball in 4)</option><option value="1" selected>Our choice (1 in 5)</option><option value="2">Strict (1 in 11)</option></select></label>
+        <label class="ctl"><span>What matters most<button class="info" type="button" data-g="lab_weights" aria-label="About this setting">i</button></span><select id="cW"><option value="0" selected>Our choice (balanced)</option><option value="1">Doing it often</option><option value="2">Rising above his usual level</option><option value="3">All equal</option></select></label>
+        <label class="ctl"><span>Evidence needed<button class="info" type="button" data-g="lab_prior" aria-label="About this setting">i</button></span><select id="cK"><option value="0">A little</option><option value="1" selected>Our choice</option><option value="2">A lot</option></select></label>
+        <label class="ctl"><span>Recent seasons count more<button class="info" type="button" data-g="lab_recency" aria-label="About this setting">i</button></span><select id="cR"><option value="1" selected>Yes</option><option value="0">No</option></select></label>
+        <label class="ctl"><span>Playoffs count as tenser<button class="info" type="button" data-g="lab_ko" aria-label="About this setting">i</button></span><select id="cO"><option value="1" selected>Yes</option><option value="0">No</option></select></label>
+        <label class="ctl"><span>Weak opponents count less<button class="info" type="button" data-g="lab_opp" aria-label="About this setting">i</button></span><select id="cX"><option value="1" selected>Yes</option><option value="0">No</option></select></label>
+      </div>
+      <div class="result" id="labResult"></div>
+      <div class="mini" id="labList"></div>
+    </div>
+    <div class="card">
+      <details class="gl"><summary>Glossary: every term in plain English</summary><dl class="gloss" id="glossList"></dl></details>
+    </div>
+  </section>
+</main>
+<footer>Prepared by Margesh · SupeRR Selector Season 2 · Shows ratings derived from the data pack only; no ball-by-ball data is published here.</footer>
+
+<div class="dbg" id="dbg"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"></aside>
+<div class="mbg" id="guide" role="dialog" aria-modal="true" aria-labelledby="gT">
+  <div class="modal">
+    <button class="x" aria-label="Close">×</button>
+    <h2 id="gT">How to read this page</h2>
+    <p class="lead" style="margin:0">Two minutes. No statistics needed.</p>
+    <ol>
+      <li><div><b>Pressure</b> = the moments when the next ball could swing the match. About 1 ball in 5.</div></li>
+      <li><div><b>"vs an average player"</b> = what he did compared with what an average player would have done in exactly the same situation. This keeps openers and finishers fair.</div></li>
+      <li><div><b>Delivered</b> = in how many of his tense games he beat that average.</div></li>
+      <li><div><b>How sure</b> = we ran the analysis 73 ways. "Very sure" means he is top 10 in almost all of them.</div></li>
+      <li><div><b>For Rajasthan Royals</b> turns it into extra wins per season for RR.</div></li>
+      <li><div>Anywhere on the page, hover or tap <b>ⓘ</b> to see what a term means, and hover a number for details.</div></li>
+    </ol>
+  </div>
+</div>
+<div class="tt" id="tt" role="tooltip"></div>
+
+<script>
+const DATA = /*DATA*/null;
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const fmt = (x, d = 1) => x == null ? "n/a" : (+x).toFixed(d);
+const sgn = (x, d = 1) => (x >= 0 ? "+" : "−") + Math.abs(+x).toFixed(d);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ABBR = {"Royal Challengers Bengaluru":"RCB","Sunrisers Hyderabad":"SRH","Lucknow Super Giants":"LSG","Kolkata Knight Riders":"KKR","Chennai Super Kings":"CSK","Rajasthan Royals":"RR","Mumbai Indians":"MI","Delhi Capitals":"DC","Punjab Kings":"PBKS","Gujarat Titans":"GT"};
+const team = t => ABBR[t] || t;
+const N_SPECS = 73;
+const byKey = {};
+for (const r of ["bat", "bowl"]) for (const p of DATA.roles[r]) byKey[r + p.id] = Object.assign(p, {role: r});
+
+// ---------- plain-language derived values
+function roleWord(p) {
+  if (p.role === "bat") {
+    const n = +((p.style.match(/no\. (\d+)/) || [])[1] || 5);
+    return n <= 2 ? "opener" : n === 3 ? "top-order batter" : n <= 5 ? "middle-order batter" : "finisher";
+  }
+  const s = p.style.toLowerCase();
+  if (s.includes("chinaman")) return "left-arm wrist spinner";
+  if (s.includes("leg")) return "leg-spinner";
+  if (s.includes("offbreak")) return "off-spinner";
+  if (s.includes("orthodox")) return "left-arm spinner";
+  return "pace bowler";
+}
+const gain = p => p.role === "bat" ? p.rate - p.xrate : p.xrate - p.rate;   // positive = better than average
+const gainText = p => p.role === "bat" ? `${sgn(gain(p), 0)} runs per 100 balls` : `${gain(p) >= 0 ? "" : "+"}${Math.abs(gain(p)).toFixed(1)} runs an over ${gain(p) >= 0 ? "fewer" : "more"}`;
+const delivered = p => Math.round(p.succ * p.pm);
+function sure(s) { return s >= .9 ? ["Very sure", "s3"] : s >= .6 ? ["Sure", "s2"] : s >= .3 ? ["Borderline", "s1"] : ["Unlikely", "s0"]; }
+function sureText(s) { return s >= .9 ? "Very safe pick: almost every reasonable way of measuring puts him in the top 10." : s >= .6 ? "Solid pick: most ways of measuring put him in the top 10." : s >= .3 ? "Borderline: some ways of measuring put him in the top 10, others just outside." : "Usually just outside the top 10."; }
+function level(s) { return s >= 1.2 ? "elite under pressure" : s >= .6 ? "clearly above average under pressure" : s >= .1 ? "a little above average under pressure" : s > -.1 ? "about average under pressure" : "below average under pressure"; }
+function avail(p) { return p.team === "Rajasthan Royals" ? ["RR", "rr", "chipRR"] : p.released_by ? ["In auction", "free", "chipRel"] : p.team === "-" ? ["In auction", "free", "chipFree"] : [team(p.team), "", "chipTeam"]; }
+const team27 = g => g.released_by ? "in the auction (released by " + team(g.released_by) + ")" : g.team === "-" ? "in the auction" : team(g.team) + " (2027)";
+function route(p) {
+  const [lab, why] = p.route, cls = {"Not available": "s0", "Already at RR": "rr", "Auction": "s3", "Under contract": "s1"}[lab];
+  return [lab === "Under contract" ? "Retained" : lab, why[0].toUpperCase() + why.slice(1) + ".", cls];
+}
+const chip = p => {
+  if (p.na) return `<span class="chip" data-tt="${A(dt(esc(p.name) + ": not available", null, null, esc(p.na[0].toUpperCase() + p.na.slice(1)) + ". His ranking shows his performance; he cannot be signed for IPL 2027."))}">Not available</span>`;
+  const [t, c, g] = avail(p);
+  if (p.released_by) return `<span class="chip free" data-tt="${A(dt(`${esc(p.name)}: released`, "official retention lists, " + DATA.trades_as_of, [["Released by", esc(p.released_by)]], "He is in no IPL 2027 squad, so RR can bid for him at the 16 December auction if he registers."))}">In auction · released by ${team(p.released_by)}</span>`;
+  if (p.traded_from) return `<span class="chip ${c}" data-tt="${A(dt(`${esc(p.name)}: traded`, "official IPL trade, by " + DATA.trades_as_of, [["From", esc(p.traded_from)], ["To", esc(p.team)]], "A trade changes his team, not his record under pressure, so his ranking is unchanged."))}">${t} · traded</span>`;
+  return `<span class="chip ${c}" data-g="${g}">${t}</span>`;
+};
+
+// ---------- glossary (single source for every ⓘ)
+const G = {
+  pressure: ["Pressure", "The moments when the next ball could swing the match. We estimate each team's chance of winning before every ball; if the next ball can change it a lot, it's a pressure ball. About 1 ball in 5.", "Needing 12 off the last over with 2 wickets left is huge pressure. Needing 12 off 6 overs with 8 wickets left is not.", null],
+  vsavg_bat: ["Under pressure, vs an average batter", "How many more runs he scored per 100 pressure balls than an average batter would have scored in exactly the same situations. The rank also counts how rarely he gets out, how often he delivers and how he compares with his usual self, so the longest bar is not always #1.", "+35 = 35 extra runs every 100 balls when it matters.", "Higher is better"],
+  vsavg_bowl: ["Under pressure, vs an average bowler", "How many fewer runs he gave away per over on pressure balls than an average bowler would have in exactly the same situations. The rank also counts wickets, how often he delivers and how he compares with his usual self, so the longest bar is not always #1.", "1.8 fewer = almost two runs an over saved when it matters.", "Higher is better"],
+  delivered: ["Delivered", "In how many of his tense games he did better than an average player would have. The bar fills up with the share of games he delivered in.", "18 of 20 = he delivered in 18 of 20 tense games.", "Higher is better"],
+  sure: ["How sure we are", "We ran the whole analysis 73 different reasonable ways. Very sure = top 10 in at least 90% of them; Sure = 60%+; Borderline = 30-60%.", null, null],
+  score: ["Pressure score", "One number combining everything: beating the average player, doing it often, rising above his usual level, and changing results. 0 = average of the players we rated.", "+1 or more = elite.", "Higher is better"],
+  tied: ["Tied", "His score is within 0.01 of the next player's: a statistical tie. The one with more tense games is placed first, because more evidence is more reliable.", null, null],
+  chipRR: ["RR", "Already in the Rajasthan Royals squad.", null, null],
+  chipFree: ["In auction", "In no IPL 2027 squad, so RR can bid for him at the 16 December auction if he registers.", null, null],
+  chipRel: ["Released", "His team let him go on 17 Nov 2026, so he is in the 16 December auction if he registers.", null, null],
+  chipTeam: ["IPL 2027 team", "His team kept him for 2027 (official retention lists, 17 Nov 2026), so he is not in the auction. Only a trade could bring him to RR.", null, null],
+  backup: ["RR auction board", "The same ratings, ranked only among players RR can buy on 16 December. Ranks 11-20 are the order to go down if a target is missed. Replace like with like: a missed spinner with the next spinner, a missed opener with the next top-order batter. 'How sure' here counts top-10 places within the auction pool.", "If Mujeeb (spin) goes to another team, the next spinner is Mohammad Rishad Hossain (#11).", null],
+  rr27: ["RR's auction budget", "From RR's official retention list (17 Nov 2026): money left to spend, squad places to fill, and how many of those can go to overseas players.", "3 overseas places means RR can buy at most three overseas players.", null],
+  usual: ["Compared with his usual self", "How much better (or worse) he is under pressure than in his normal games, in runs per 100 balls. Positive = he rises to the occasion.", null, "Higher is better"],
+  moment: ["Biggest moment", "The single ball where he moved the match most in his team's favour, measured as the change in his team's chance of winning.", null, null],
+  rrfit: ["For RR", "Which RR gap he would fill, and how many extra wins per season that adds, based on RR's 2026 season.", null, null],
+  strip: ["Every tense game", "Each dot is one game where he faced or bowled enough pressure balls to count. Blue = he beat the average player that day. Hollow orange = he fell short.", null, null],
+  versions: ["Rank in each version", "Where he ranked in each of the 288 versions of our analysis. Bars inside the pink band are top-10 finishes.", null, null],
+  gems: ["Hidden gem", "An active player whose pressure numbers are excellent, but who has faced fewer than 100 pressure balls or 10 tense games, so we can't rank him with full confidence yet. 'Would rank' is where his cautious estimate would place him.", null, null],
+  dip: ["Pressure reputation", "These players are very good in normal games, but are clearly worse under pressure than their own normal level. Paying extra for their 'big-match' reputation would be overpaying.", null, null],
+  famous: ["Why not in the top 10?", "Each well-known name with the main reason from the data: just outside, about average under pressure, slower than an average player in the same spots, or a drop under pressure.", null, null],
+  route: ["Route to RR", "How RR could sign him for 2027, from the official retention lists. Auction = he can be bought on 16 Dec. Retained = his team kept him, so only a trade could move him. Already at RR = keep.", "The rankings show who performs best under pressure; this shows who RR can actually get.", null],
+  h2h: ["Head-to-head test", "Skill, not luck = does the measure agree with itself across two random halves of a player's games (higher is better). Predicts next seasons = built on 2022-24, how well it ranks 2025-26 pressure performance (higher is better). Role bias = how much the ranking just follows how often a player bats or bowls at the death (lower is fairer).", null, null],
+  young: ["Young and uncapped", "Uncapped = has never played for India's senior team in any format. Ages and cap status were checked against public records (17 Nov 2026). With so few tense games, these numbers can change quickly.", null, null],
+  closegames: ["Close game", "One of the tensest third of IPL matches in 2025-26: the match reached a pressure level of 8 or more, so the result was genuinely in doubt late on.", null, null],
+  rrfinish: ["IPL 2026 finish", "RR won 8 of 14 league games. RCB, SRH and GT tied for the top two places, which give two chances to reach the final.", null, null],
+  wins: ["Wins added", "Extra matches RR would expect to win per season if this player took over the pressure balls that went to RR's weaker players in his role in 2026.", "+0.4 sounds small, but RR finished one win short of the top two.", "Higher is better"],
+  plan: ["2027 auction plan", "Our recommendation for RR: the player in the auction pool who adds the most wins in each gap (middle-order batting, pace, spin), within RR's budget of overseas places. Back-ups cover the same gaps if the price is too high.", "A second player for the same gap adds little, because both would take the same balls.", null],
+  reliability: ["Skill or luck?", "We split each player's games into two random halves and check whether a measure gives the same answer in both. 1 = always the same (skill), 0 = no link (luck).", null, "Higher is better"],
+  rankcorr: ["Agreement", "How similar two rankings are. 1 = exactly the same order, 0 = unrelated.", null, null],
+  lab: ["Our settings", "Judgement calls such as how tense a ball must be to count. Our final list averages 73 versions, so no single choice decides it.", null, null],
+  lab_threshold: ["How tense counts as pressure", "Where to draw the line between a normal ball and a pressure ball.", "Wider = 1 ball in 4 counts. Ours = 1 in 5. Strict = only the tensest 1 in 11.", null],
+  lab_weights: ["What matters most", "How much the score values beating the average player, doing it often, and rising above his usual level.", null, null],
+  lab_prior: ["Evidence needed", "How many pressure balls we need before trusting a player's pressure record over his normal record. A little = small samples count more.", null, null],
+  lab_recency: ["Recent seasons count more", "Yes = 2026 counts fully, 2024 about two-thirds, 2022 about one-third.", null, null],
+  lab_ko: ["Playoffs count as tenser", "Yes = playoff, semi-final and final balls count as 25% more pressured.", null, null],
+  lab_opp: ["Weak opponents count less", "Yes = games against associate nations and A-teams count half.", null, null],
+};
+const GLOSS_ORDER = ["pressure", "vsavg_bat", "vsavg_bowl", "delivered", "sure", "score", "usual", "tied", "wins", "closegames", "reliability", "rankcorr", "moment", "chipFree"];
+const gloss = k => { const [t, b, ex, dir] = G[k]; return `<div class="t">${t}</div><div>${b}</div>${ex ? `<div class="ex"><b>Example:</b> ${ex}</div>` : ""}${dir ? `<span class="dir">${dir}</span>` : ""}`; };
+const info = k => `<button class="info" type="button" data-g="${k}" aria-label="What does ${esc(G[k][0])} mean?">i</button>`;
+function dt(head, sub, rows, foot) {
+  return `<div class="h"><b>${head}</b>${sub ? `<span>${sub}</span>` : ""}</div>` +
+    (rows && rows.length ? `<div class="rows">${rows.map(([l, v, c]) => String(v).length > 22 ? `<div class="r stack"><span class="lab">${l}</span><b>${v}</b></div>` : `<div class="r">${c ? `<i class="dot" style="background:${c}"></i>` : ""}<span class="lab">${l}</span><b>${v}</b></div>`).join("")}</div>` : "") +
+    (foot ? `<div class="f">${foot}</div>` : "");
+}
+const A = s => esc(s);
+
+// ---------- tooltip engine (hover, keyboard focus, tap)
+const tt = $("#tt");
+let cur = null, timer = null;
+function place(t) {
+  const r = t.getBoundingClientRect();
+  tt.classList.remove("below");
+  const w = tt.offsetWidth, h = tt.offsetHeight;
+  let top = r.top - h - 10;
+  if (top < 8) { top = r.bottom + 10; tt.classList.add("below"); }
+  const cx = r.left + Math.min(r.width, 280) / 2;
+  const left = Math.max(8, Math.min(innerWidth - w - 8, cx - w / 2));
+  tt.style.left = left + "px"; tt.style.top = top + "px";
+  tt.style.setProperty("--ax", Math.max(14, Math.min(w - 14, cx - left)) + "px");
+}
+function show(t) {
+  const g = t.dataset.g;
+  tt.className = "tt " + (g ? "concept" : "data");
+  tt.innerHTML = g ? gloss(g) : t.dataset.tt;
+  place(t);
+  requestAnimationFrame(() => tt.classList.add("show"));
+  $$(".info.on").forEach(e => e.classList.remove("on"));
+  if (g && t.classList.contains("info")) t.classList.add("on");
+  cur = t;
+}
+function hide() { clearTimeout(timer); tt.classList.remove("show"); cur = null; $$(".info.on").forEach(e => e.classList.remove("on")); }
+const tipOf = e => e.target.closest && e.target.closest("[data-g],[data-tt]");
+document.addEventListener("pointerover", e => { if (e.pointerType === "touch") return; const t = tipOf(e); if (!t || t === cur) return; clearTimeout(timer); timer = setTimeout(() => show(t), t.dataset.g ? 60 : 120); });
+document.addEventListener("pointerout", e => { if (e.pointerType === "touch") return; const t = tipOf(e); if (t && !t.contains(e.relatedTarget)) { clearTimeout(timer); if (cur === t) hide(); } });
+document.addEventListener("focusin", e => { const t = e.target.closest && e.target.closest("[data-g]"); if (t) show(t); });
+document.addEventListener("focusout", e => { if (e.target.closest && e.target.closest("[data-g]")) hide(); });
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-g]");
+  if (g) { e.preventDefault(); e.stopPropagation(); (cur === g && tt.classList.contains("show")) ? hide() : show(g); return; }
+  if (!e.target.closest("#tt")) hide();
+}, true);
+addEventListener("scroll", hide, {passive: true, capture: true});
+addEventListener("resize", hide);
+
+// ---------- tabs, toggles, guide
+function goTab(name) {
+  $$("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === name));
+  $$("main > section").forEach(s => s.hidden = s.id !== "tab-" + name);
+  history.replaceState(null, "", location.search + "#" + name);
+  try { localStorage.setItem("pri-tab", name); } catch (e) {}
+  hide(); scrollTo(0, 0);
+}
+$$("nav.tabs button").forEach(b => b.onclick = () => goTab(b.dataset.tab));
+function seg(id, cb) { $$("button", $(id)).forEach(b => b.onclick = () => { $$("button", $(id)).forEach(x => x.setAttribute("aria-pressed", x === b)); cb(b.dataset.role); }); }
+function setSeg(id, role) { $$("button", $(id)).forEach(x => x.setAttribute("aria-pressed", x.dataset.role === role)); }
+$("#guideBtn").onclick = () => $("#guide").classList.add("open");
+$("#guide").onclick = e => { if (e.target.id === "guide" || e.target.classList.contains("x")) $("#guide").classList.remove("open"); };
+$("#glossList").innerHTML = GLOSS_ORDER.map(k => `<dt>${G[k][0]}</dt><dd>${G[k][1]}${G[k][2] ? `<span class="ex">Example: ${G[k][2]}</span>` : ""}</dd>`).join("");
+
+// ---------- shared row tooltips
+function tipGain(p) {
+  const isBat = p.role === "bat";
+  return isBat
+    ? dt("Runs per 100 pressure balls", esc(p.name), [["He scored", fmt(p.rate, 0), "var(--blue)"], ["An average batter would score", fmt(p.xrate, 0), "var(--gray)"], ["Times out (average batter)", `${p.outs} (${fmt(p.xouts, 0)})`]],
+        `That is <b>${Math.abs(gain(p)).toFixed(0)} runs ${gain(p) >= 0 ? "more" : "fewer"}</b> every 100 balls when it matters` + (p.outs < p.xouts * 0.8 ? `, and he gets out far less than an average batter, which also counts in his rank.` : "."))
+    : dt("Runs given away per over under pressure", esc(p.name), [["He gave away", fmt(p.rate, 2), "var(--blue)"], ["An average bowler would give", fmt(p.xrate, 2), "var(--gray)"], ["Wickets (average bowler)", `${p.outs} (${fmt(p.xouts, 0)})`]],
+        `That is <b>${Math.abs(gain(p)).toFixed(1)} runs an over ${gain(p) >= 0 ? "fewer" : "more"}</b> when it matters` + (p.outs > p.xouts * 1.2 ? `, and he takes far more wickets than an average bowler, which also counts in his rank.` : "."));
+}
+const tipDeliv = p => dt(`Delivered in ${delivered(p)} of ${p.pm} tense games`, esc(p.name), null, `In ${delivered(p)} of his ${p.pm} games with real pressure, he did better than an average player would have.`);
+const tipSure = p => dt(`${sure(p.top10)[0]}: top 10 in ${Math.round(p.top10 * N_SPECS)} of ${N_SPECS} versions`, esc(p.name), null, sureText(p.top10));
+
+// ---------- TOP 10 leaderboard
+let topRole = "bat";
+function boardRows(list, key, isBat, maxG, backup) {
+  let h = `<div class="lb-grid th"><div>#</div><div>Player</div><div class="c-gain">Under pressure, vs an average ${isBat ? "batter" : "bowler"}${info(isBat ? "vsavg_bat" : "vsavg_bowl")}</div><div class="c-deliv">Delivered${info("delivered")}</div><div class="c-sure">How sure${info("sure")}</div><div></div></div>`;
+  for (const p of list) {
+    const k = p[key], share = key === "arank" ? p.atop10 : p.top10;
+    const [sl, sc] = sure(share), gg = gain(p);
+    if (backup && k === 11) h += `<div class="backup-head"><b class="t">Backup order: 11 to 20${info("backup")}</b>If a pick above is missed at the auction, take the next name, ideally one with the same role. These players are the best of what is left, not equals.</div>`;
+    h += `<div class="lb-grid lb-row${backup && k > 10 ? " backup" : ""}" tabindex="0" role="button" data-key="${p.role}${p.id}" aria-label="Open ${esc(p.name)}">
+      <div class="rank">${k}${key === "rank" && p.tied ? `<small data-g="tied">TIED</small>` : ""}</div>
+      <div><div class="pname">${esc(p.name)}${chip(p)}</div><div class="pmeta">${esc(p.nation)} · ${roleWord(p)}${key === "arank" ? ` · #${p.rank} overall` : ""}${key === "arank" && p.nation === "India" ? ' · <b style="color:var(--pink)">Indian · no overseas place</b>' : ""}</div><div class="mline"><b>${isBat ? sgn(gg, 0) + " runs per 100 balls" : Math.abs(gg).toFixed(1) + " runs an over " + (gg >= 0 ? "saved" : "more")}</b> · delivered ${delivered(p)} of ${p.pm} · <span class="badge ${sc}" style="padding:1px 8px;font-size:11.5px">${sl}</span></div></div>
+      <div class="gain c-gain" data-tt="${A(tipGain(p))}"><div class="val">${isBat ? sgn(gg, 0) : Math.abs(gg).toFixed(1) + (gg >= 0 ? " fewer" : " more")} <span>${isBat ? "runs per 100 balls" : "runs an over"}</span></div><div class="track"><i style="width:${Math.max(4, gg / maxG * 100)}%"></i></div></div>
+      <div class="deliv c-deliv" data-tt="${A(tipDeliv(p))}"><div class="val">${delivered(p)} of ${p.pm} <span>games</span></div><div class="track"><i style="width:${p.succ * 100}%"></i></div></div>
+      <div class="c-sure"><span class="badge ${sc}" data-tt="${A(dt(`${sl}: top 10 in ${Math.round(share * N_SPECS)} of ${N_SPECS} versions`, esc(p.name) + (key === "arank" ? " · within the auction pool" : ""), null, sureText(share)))}">${sl}</span></div>
+      <div class="chev">›</div></div>`;
+  }
+  return h;
+}
+function board() {
+  const isBat = topRole === "bat", all = DATA.roles[topRole];
+  const top = all.filter(p => p.rank <= 10).sort((a, b) => a.rank - b.rank);
+  const auc = all.filter(p => p.arank != null && p.arank <= 20).sort((a, b) => a.arank - b.arank);
+  const maxG = Math.max(...top.map(gain), ...auc.map(gain));
+  const broad = p => p.role === "bat" ? (/opener|top-order/.test(roleWord(p)) ? "Top-order" : "Middle-order") : (roleWord(p).includes("spin") ? "Spin" : "Pace");
+  $("#topCount").textContent = `Chosen from ${all.length} ${isBat ? "batters" : "bowlers"} with enough pressure balls`;
+  const nOut = top.filter(p => p.route[0] !== "Auction").length;
+  let h = boardRows(top, "rank", isBat, maxG, false);
+  h += `<div class="below-board"><div class="next">${nOut} of these 10 cannot be bought at the auction (kept by their teams or already at RR). See the auction board below.</div><button class="btn" id="seeAll">See all ${all.length} ${isBat ? "batters" : "bowlers"} →</button></div>`;
+  $("#board").innerHTML = h;
+  let h2 = boardRows(auc, "arank", isBat, maxG, true);
+  const groups = {};
+  for (const p of auc.filter(p => p.arank > 10)) (groups[broad(p)] = groups[broad(p)] || []).push(`${esc(p.name)} (#${p.arank})`);
+  h2 += `<div class="rolegroups"><b>Backups by role.</b> ${Object.entries(groups).map(([k, v]) => `<b>${k}:</b> ${v.join(", ")}`).join(" · ")}</div>`;
+  h2 += `<div class="below-board"><div class="next">RR have ${DATA.rr27.overseas} overseas places: Indian players do not use one.</div></div>`;
+  $("#board2").innerHTML = h2;
+  $$(".lb-row", $("#tab-top")).forEach(r => { r.onclick = e => { if (!e.target.closest("[data-g]")) openPlayer(r.dataset.key); }; r.onkeydown = e => { if (e.key === "Enter") openPlayer(r.dataset.key); }; });
+  $("#seeAll").onclick = () => { allRole = topRole; setSeg("#allSeg", allRole); allTable(); goTab("all"); };
+}
+seg("#topSeg", r => { topRole = r; board(); });
+
+// ---------- ALL PLAYERS
+let allRole = "bat";
+function allTable() {
+  const q = $("#q").value.trim().toLowerCase(), isBat = allRole === "bat";
+  const rows = DATA.roles[allRole].slice().sort((a, b) => a.rank - b.rank);
+  let h = `<thead><tr><th>#</th><th>Player</th><th class="num"><span>Pressure score${info("score")}</span></th><th class="num"><span>vs an average ${isBat ? "batter" : "bowler"}${info(isBat ? "vsavg_bat" : "vsavg_bowl")}</span></th><th class="num hide-sm"><span>Delivered${info("delivered")}</span></th><th><span>How sure${info("sure")}</span></th></tr></thead><tbody>`;
+  for (const p of rows) {
+    if (q && !p.name.toLowerCase().includes(q)) continue;
+    const [sl, sc] = sure(p.top10), gg = gain(p);
+    const scoreTip = dt(`Pressure score ${sgn(p.score, 2)}`, `#${p.rank} of ${rows.length}${p.arank ? ` · #${p.arank} in the auction pool` : ""}`, null, `${esc(p.name)} is <b>${level(p.score)}</b>. 0 = the average of the players we rated.`);
+    h += `<tr data-key="${allRole}${p.id}" class="${p.rank === 10 && !q ? "cut" : ""}"><td><b>${p.rank}</b></td><td><b>${esc(p.name)}</b>${chip(p)}<div class="pmeta">${esc(p.nation)} · ${roleWord(p)} ${p.arank ? ` · auction board #${p.arank}` : ""}</div></td>
+      <td class="num" data-tt="${A(scoreTip)}"><b>${sgn(p.score, 2)}</b></td>
+      <td class="num" data-tt="${A(tipGain(p))}">${isBat ? sgn(gg, 0) : (gg >= 0 ? "" : "−") + Math.abs(gg).toFixed(1)} <span class="muted small">${isBat ? "per 100 balls" : "runs an over saved"}</span></td>
+      <td class="num hide-sm" data-tt="${A(tipDeliv(p))}">${delivered(p)} of ${p.pm}</td>
+      <td><span class="badge ${sc}" data-tt="${A(tipSure(p))}">${sl}</span></td></tr>`;
+  }
+  $("#allTable").innerHTML = h + "</tbody>";
+  $$("tbody tr", $("#allTable")).forEach(tr => tr.onclick = e => { if (!e.target.closest("[data-g]")) openPlayer(tr.dataset.key); });
+}
+seg("#allSeg", r => { allRole = r; allTable(); });
+$("#q").oninput = allTable;
+
+// ---------- FOR RR
+function rr() {
+  const items = [];
+  for (const r of ["bat", "bowl"]) for (const p of DATA.roles[r]) if (p.wins != null && p.team !== "Rajasthan Royals" && p.slot !== "top order" && p.wins > 0.005 && (p.rank <= 10 || (p.arank != null && p.arank <= 16))) items.push(p);
+  const max = Math.max(...items.map(p => p.wins));
+  const COLS = [["middle / finish", "Middle-order batting", "A batter for no. 4-7"], ["pace", "Pace bowling", "A fast bowler for the tense overs"], ["spin", "Spin bowling", "A spinner for the tense overs"]];
+  $("#winsCols").innerHTML = COLS.map(([slot, title, need]) => {
+    const list = items.filter(p => p.slot === slot).sort((a, b) => b.wins - a.wins);
+    return `<div class="col"><h3>${title}</h3><div class="need">${need} · takes balls from ${esc(list[0].replaces)}</div>` + list.map(p => {
+      const tip = dt(esc(p.name), `${p.role === "bat" ? "Batter" : "Bowler"} #${p.rank} · ${avail(p)[0]}`, [["Extra wins per season", "+" + p.wins.toFixed(2), "var(--blue)"], ["Likely range", `${Math.max(0, p.wins_lo).toFixed(2)} to ${p.wins_hi.toFixed(2)}`]],
+        `Roughly <b>one extra win every ${Math.max(1, Math.round(1 / p.wins))} seasons</b> from this slot alone. Click to see the player.`);
+      return `<div class="wrow" data-key="${p.role}${p.id}" data-tt="${A(tip)}"><div class="top"><b>${esc(p.name)}${p.route[0] === "Auction" ? ' <span class="pill good" style="font-size:11px;padding:1px 7px">In auction</span>' : ""}</b><span>+${p.wins.toFixed(2)}</span></div><div class="track"><i style="width:${p.wins / max * 100}%"></i></div></div>`;
+    }).join("") + `</div>`;
+  }).join("");
+  $$(".wrow").forEach(w => w.onclick = () => openPlayer(w.dataset.key));
+  const best = COLS.map(([slot]) => items.filter(p => p.slot === slot && p.route[0] === "Auction").sort((a, b) => b.wins - a.wins)[0]);
+  const ideal = DATA.ideal;
+  const R7 = DATA.rr27, byName = n => [...DATA.roles.bat, ...DATA.roles.bowl].find(p => p.name === n && p.wins != null);
+  $("#purseV").textContent = "Rs " + R7.purse + " Cr";
+  $("#purseN").textContent = `${R7.slots} places to fill, ${R7.overseas} of them overseas`;
+  $("#planBudget").textContent = `Rs ${R7.purse} Cr, ${R7.slots} places and ${R7.overseas} overseas places`;
+  const li = n => { const p = byName(n); const os = p.nation !== "India";
+    const tip = dt(esc(n), `${p.role === "bat" ? "Batter" : "Bowler"} #${p.rank} · ${os ? "uses an overseas place" : "Indian: no overseas place needed"}`, [["Extra wins per season", "+" + p.wins.toFixed(2), "var(--blue)"], ["Gap he fills", p.slot === "middle / finish" ? "middle-order batting" : p.slot], ["Last IPL fee", R7.fee[n] || "not confirmed"]], esc(p.route[1][0].toUpperCase() + p.route[1].slice(1)) + ".");
+    return `<li class="click" data-key="${p.role}${p.id}" data-tt="${A(tip)}" style="cursor:pointer"><b>${esc(n)} <span style="font-weight:400;color:var(--ink2)">+${p.wins.toFixed(2)} wins</span></b>${p.role === "bat" ? "Batter" : "Bowler"} #${p.rank} · ${os ? "overseas" : "Indian"} · ${esc(R7.fee[n] || (p.released_by ? "released by " + team(p.released_by) : "in the auction"))}</li>`; };
+  $("#planFirst").innerHTML = R7.first.map(li).join("");
+  $("#planBackup").innerHTML = R7.backup.map(li).join("");
+  const tot = R7.first.reduce((a, n) => a + byName(n).wins, 0), idl = ideal.reduce((a, p) => a + p.wins, 0);
+  $("#trioN").textContent = "a season: " + best.map(p => p.name).join(", ");
+  $("#planNote").innerHTML = `<b>Plan 1 adds about +${tot.toFixed(2)} wins a season</b> with RR's ${R7.overseas} overseas places: ${Math.round(tot / idl * 100)}% of the best possible trio (${ideal.map(p => esc(p.name)).join(", ")}), all of whom were retained by their teams. Two of the three went unsold in 2026 and the third has never played in the IPL: the market passed on them, but their pressure records are top 10. Pathirana is top 10 too, but adds less for RR than Adair, and his last fee (Rs 18 Cr) is two-thirds of RR's budget.`;
+  $$("#tab-rr .plan li.click").forEach(l => l.onclick = () => openPlayer(l.dataset.key));
+  $("#trioV").textContent = "+" + best.reduce((a, p) => a + p.wins, 0).toFixed(2) + " wins";
+  $("#trioN").textContent = "a season: " + best.map(p => p.name).join(", ");
+  $("#asOf").textContent = DATA.trades_as_of;
+  $("#routeCols").innerHTML = ["bat", "bowl"].map(role => `<div><h3>${role === "bat" ? "Top 10 batters" : "Top 10 bowlers"}</h3><div class="xlist">` +
+    DATA.overall[role].map(o => { const lab = o.route === "Auction" ? `In auction · board #${o.arank}` : o.route === "Already at RR" ? "Already at RR" : o.route === "Under contract" ? "Retained · " + team(o.team) : "Not available";
+      const cls = o.route === "Auction" ? "s3" : o.route === "Already at RR" ? "rr" : "s1";
+      const why = o.route === "Auction" ? "He is in the auction pool, so RR can bid for him on 16 December." : o.route === "Already at RR" ? "Already in RR's squad for 2027." : `${esc(o.team)} kept him for 2027, so he is not in the auction.`;
+      return `<div class="xrow route-row" data-tt="${A(dt(esc(o.name), `#${o.rank} of all ${DATA.n_all[role]} ${role === "bat" ? "batters" : "bowlers"}`, null, why))}" style="grid-template-columns:1fr auto;padding:9px 14px"><div><b>${o.rank}.</b> ${esc(o.name)}</div><span class="badge ${cls === "rr" ? "" : cls}" style="${cls === "rr" ? "background:var(--pink-soft);color:var(--pink)" : ""}">${lab}</span></div>`; }).join("") + `</div></div>`).join("");
+  const pool = [];
+  for (const role of ["bat", "bowl"]) for (const p of DATA.roles[role]) if (p.arank != null && p.arank > 10 && p.arank <= 20) pool.push(p);
+  pool.sort((a, b) => a.role === b.role ? a.arank - b.arank : a.role === "bat" ? -1 : 1);
+  $("#auctionList").innerHTML = pool.map(p => `<div class="xrow click" data-key="${p.role}${p.id}"><div><div class="big2">${esc(p.name)}</div><div class="sub2">${esc(p.nation)} · ${roleWord(p)}</div></div>
+      <div><div class="big2">Board #${p.arank} · ${p.role === "bat" ? "batter" : "bowler"} #${p.rank} overall</div><div class="sub2">${p.role === "bat" ? sgn(gain(p), 0) + " runs per 100 pressure balls vs average" : Math.abs(gain(p)).toFixed(1) + " runs an over " + (gain(p) >= 0 ? "saved" : "more") + " under pressure"}</div></div>
+      <div><span class="pill good">${p.unsold26 ? "Unsold at the 2026 auction" : p.released_by ? "Released by " + team(p.released_by) : "In the auction if he registers"}</span></div></div>`).join("") +
+    DATA.gems.filter(g => g.route === "Auction").map(g => `<div class="xrow"><div><div class="big2">${esc(g.name)}</div><div class="sub2">${g.style} · hidden gem</div></div><div><div class="big2">Would rank about #${g.would_rank}</div><div class="sub2">only ${g.matches} tense games so far</div></div><div><span class="pill">Watch list</span></div></div>`).join("");
+  $$("#tab-rr .xrow.click").forEach(r => r.onclick = e => { if (!e.target.closest("[data-g]")) openPlayer(r.dataset.key); });
+  hbar($("#closeChart"), DATA.close.map(d => ({label: team(d.team), v: d.win_pct, d})), {fmtv: v => v.toFixed(0) + "%", hl: d => d.d.team === "Rajasthan Royals", w: 640, left: 70,
+    tip: d => dt(esc(d.d.team), "close games, IPL 2025-26", [["Played", d.d.close_games], ["Won", d.d.close_wins]], `Won <b>${d.d.close_wins} of ${d.d.close_games}</b> tight games (${d.v.toFixed(0)}%).`)});
+}
+
+// ---------- BEYOND THE TOP 10
+function beyond() {
+  const rec = x => x.role === "bat" ? `${fmt(x.rate, 0)} vs ${fmt(x.xrate, 0)} runs per 100 balls` : `${fmt(x.rate, 2)} vs ${fmt(x.xrate, 2)} runs an over`;
+  const better = x => x.role === "bat" ? x.rate > x.xrate : x.rate < x.xrate;
+  $("#gemList").innerHTML = DATA.gems.map(g => {
+    const tip = dt(esc(g.name), `${g.style} · ${team27(g)}`, [["Under pressure", fmt(g.rate, g.role === "bat" ? 0 : 2)], ["Average player, same spots", fmt(g.xrate, g.role === "bat" ? 0 : 2)], [g.role === "bat" ? "Times out (average)" : "Wickets (average)", `${g.outs} (${fmt(g.xouts, 1)})`], ["Evidence", `${g.n_p} pressure balls, ${g.matches} tense games`]],
+      `Too little evidence for the ranked list yet, but his cautious estimate would place him about <b>#${g.would_rank}</b>.`);
+    return `<div class="xrow" data-tt="${A(tip)}"><div><div class="big2">${esc(g.name)}${g.uncapped ? ' <span class="chip free" style="cursor:default">uncapped</span>' : ""}</div><div class="sub2">${g.style} · ${team27(g)}</div></div>
+      <div><div class="big2">${rec(g)}</div><div class="sub2">${g.role === "bat" ? "out" : "wickets"} ${g.outs} vs ${fmt(g.xouts, 1)} for an average player</div></div>
+      <div><span class="pill good">Would rank about #${g.would_rank}</span> <span class="sub2">· only ${g.matches} tense games so far</span></div></div>`;
+  }).join("");
+  $("#youngList").innerHTML = DATA.young.map(y => {
+    const tip = dt(`${esc(y.name)}, ${y.age}`, `${y.style} · ${team27(y)} · uncapped`, [["Under pressure", fmt(y.rate, y.role === "bat" ? 0 : 2)], ["Average player, same spots", fmt(y.xrate, y.role === "bat" ? 0 : 2)], [y.role === "bat" ? "Times out (average)" : "Wickets (average)", `${y.outs} (${fmt(y.xouts, 1)})`]],
+      `Only ${y.matches} tense games so far: an early signal, not a ranking.`);
+    return `<div class="xrow" data-tt="${A(tip)}"><div><div class="big2">${esc(y.name)} <span class="chip free" style="cursor:default">age ${y.age}</span></div><div class="sub2">${y.style} · ${team27(y)}</div></div>
+      <div><div class="big2">${rec(y)}</div><div class="sub2">${y.role === "bat" ? "out" : "wickets"} ${y.outs} vs ${fmt(y.xouts, 1)} for an average player</div></div>
+      <div><span class="pill">${y.matches} tense games</span></div></div>`;
+  }).join("");
+  $("#dipList").innerHTML = DATA.dippers.map(d => {
+    const p = byKey[d.role + d.pid];
+    return `<div class="xrow click" data-key="${d.role}${d.pid}"><div><div class="big2">${esc(d.name)}${p ? chip(p) : ""}</div><div class="sub2">ranked ${d.crank} of ${d.n_pool}</div></div>
+      <div><div class="big2">${Math.abs((d.rate - d.xrate) / d.xrate) < 0.03 ? "About average" : better(d) ? "Slightly better than average" : "Worse than average"} under pressure</div><div class="sub2">${rec(d)}</div></div>
+      <div><span class="pill warn">${d.lift.toFixed(1)} vs his usual self</span> <span class="sub2">· delivered in ${Math.round(d.succ * 100)}% of ${d.matches} tense games</span></div></div>`;
+  }).join("");
+  $("#famList").innerHTML = DATA.famous.map(f => {
+    const p = byKey[f.role + f.pid];
+    return `<div class="xrow click" data-key="${f.role}${f.pid}"><div><div class="big2">${esc(f.name)}${p ? chip(p) : ""}</div><div class="sub2">${f.role === "bat" ? "batter" : "bowler"} · ranked ${f.crank} of ${f.n_pool}</div></div>
+      <div class="sub2" style="font-size:13.5px">${rec(f)}</div>
+      <div><b style="font-size:14px">${esc(f.reason[0].toUpperCase() + f.reason.slice(1))}</b></div></div>`;
+  }).join("");
+  $$(".xrow.click").forEach(r => r.onclick = e => { if (!e.target.closest("[data-g],[data-tt].chip")) openPlayer(r.dataset.key); });
+}
+
+// ---------- HOW WE DID IT
+const NS = "http://www.w3.org/2000/svg";
+function svg(w, h) { const s = document.createElementNS(NS, "svg"); s.setAttribute("viewBox", `0 0 ${w} ${h}`); s.setAttribute("width", "100%"); s.style.maxWidth = w + "px"; s.style.display = "block"; return s; }
+function el(tag, at, parent, text) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (text != null) e.textContent = text; parent.appendChild(e); return e; }
+function hbar(box, items, {fmtv, hl = () => false, w = 520, left = 150, tip} = {}) {
+  const rowH = 28, H = items.length * rowH + 6, s = svg(w, H);
+  const hi = Math.max(...items.map(d => d.v)), x = v => left + v / hi * (w - left - 56);
+  items.forEach((d, i) => {
+    const y = 3 + i * rowH;
+    const hit = el("rect", {class: "hit", x: 0, y, width: w, height: rowH - 4, rx: 6, fill: "transparent"}, s);
+    if (tip) hit.dataset.tt = tip(d);
+    const t = el("text", {x: left - 10, y: y + 16, "text-anchor": "end", class: hl(d) ? "lbl" : "", "pointer-events": "none"}, s, d.label); t.style.fontWeight = hl(d) ? 700 : 400;
+    el("rect", {x: left, y: y + 4, width: Math.max(2, x(d.v) - left), height: 16, rx: 4, fill: hl(d) ? "var(--pink)" : "var(--gray)", "pointer-events": "none"}, s);
+    el("text", {x: x(d.v) + 7, y: y + 16, "pointer-events": "none", class: hl(d) ? "lbl" : ""}, s, fmtv(d.v));
+  });
+  box.innerHTML = ""; box.appendChild(s);
+}
+const rel = (role, m) => DATA.reliability.find(r => r.role === role && r.metric === m).full_sample_reliability;
+function how() {
+  const nice = [["Pressure Quality (PRI core)", "Our measure"], ["Raw pressure run value", "Raw runs under pressure"], ["Raw pressure WPA", "Usual \"clutch\" stat"]];
+  const items = [];
+  for (const r of ["bat", "bowl"]) for (const [m, lab] of nice) items.push({label: `${lab} (${r === "bat" ? "batters" : "bowlers"})`, v: Math.max(0, rel(r, m)), core: m.includes("core")});
+  hbar($("#relChart"), items, {fmtv: v => v.toFixed(2), hl: d => d.core, w: 460, left: 230,
+    tip: d => dt(esc(d.label), "skill-or-luck test", [["Agreement between halves", d.v.toFixed(2)]], d.v >= .4 ? "<b>Mostly skill.</b> A player's number in one half of his games predicts the other half." : d.v >= .2 ? "<b>Partly skill, partly luck.</b>" : "<b>Mostly luck.</b> One half tells you almost nothing about the other.")});
+  const t = DATA.tier;
+  $("#tierBox").innerHTML = `<table style="font-size:14px"><thead><tr><th>Rated on</th><th class="num">Agreement${info("rankcorr")}</th><th class="num">Our top 10 also top 10</th></tr></thead><tbody>` +
+    t.map(r => `<tr style="cursor:default" data-tt="${A(dt(`${r.tier}, ${r.role === "bat" ? "batters" : "bowlers"}`, null, [["Agreement with our ranking", r.spearman.toFixed(2)], ["Our top 10 with enough data here", r.final_top10_eligible], ["...also top 10 here", r.final_top10_in_tier_top10]], "1 = exactly the same order."))}"><td>${r.tier}, ${r.role === "bat" ? "batters" : "bowlers"}</td><td class="num"><b>${r.spearman.toFixed(2)}</b></td><td class="num">${r.final_top10_in_tier_top10} of ${r.final_top10_eligible}</td></tr>`).join("") + `</tbody></table>`;
+  const nm = {"Common: death overs / high required rate + raw strike rate": "Death overs + raw strike rate", "Common: same pressure, strike rate under pressure minus normal": "Pressure minus normal strike rate",
+    "Common: death overs / high required rate + raw economy": "Death overs + raw economy", "Common: same pressure, economy under pressure minus normal": "Pressure minus normal economy",
+    "Ours: win-probability pressure + context-adjusted, shrunk rating": "Ours"};
+  $("#h2h").innerHTML = `<thead><tr><th>Method</th><th>Players</th><th class="num">Skill, not luck</th><th class="num">Predicts next seasons</th><th class="num">Role bias (lower = fairer)</th></tr></thead><tbody>` +
+    DATA.compare.map(r => `<tr style="cursor:default${r.method.startsWith("Ours") ? ";background:var(--blue-soft)" : ""}"><td>${r.method.startsWith("Ours") ? "<b>Ours</b>" : nm[r.method]}</td><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${r.reliability.toFixed(2)}</td><td class="num">${(r.next_seasons >= 0 ? "+" : "") + r.next_seasons.toFixed(2)}</td><td class="num">${r.role_bias.toFixed(2)}</td></tr>`).join("") + `</tbody>`;
+  lab();
+}
+let labRole = "bat";
+const LAB = ["#cP", "#cK", "#cW", "#cR", "#cO", "#cX"];
+function lab() {
+  const v = LAB.map(s => +$(s).value), i = DATA.specs.findIndex(s => s.every((x, k) => x === v[k]));
+  const pl = DATA.roles[labRole], ranked = pl.filter(p => p.grid[i] != null).sort((a, b) => b.grid[i] - a.grid[i]);
+  const top = ranked.slice(0, 10), stay = top.filter(p => p.rank <= 10).length;
+  const isOurs = v.join() === "1,1,0,1,1,1";
+  $("#labResult").innerHTML = `<b>${stay} of our 10</b> ${labRole === "bat" ? "batters" : "bowlers"} are still in the top 10 with these settings${isOurs ? " (this is our main setting)" : ""}. ` +
+    (stay === 10 ? "Same top 10." : `New: ${top.filter(p => p.rank > 10).map(p => esc(p.name)).join(", ")}.`);
+  $("#labList").innerHTML = top.map((p, k) => {
+    const d = p.rank - (k + 1), mv = d > 0 ? `<span class="mv up">▲ ${d}</span>` : d < 0 ? `<span class="mv down">▼ ${-d}</span>` : `<span class="mv same">same</span>`;
+    return `<div data-tt="${A(dt(esc(p.name), `#${k + 1} here · #${p.rank} in our final list`, null, d === 0 ? "Same place as in our final list." : `${Math.abs(d)} place${Math.abs(d) > 1 ? "s" : ""} ${d > 0 ? "higher" : "lower"} than in our final list.`))}"><span><b>${k + 1}.</b> ${esc(p.name)}</span>${mv}</div>`;
+  }).join("");
+}
+LAB.forEach(s => $(s).onchange = lab);
+seg("#labSeg", r => { labRole = r; lab(); });
+
+// ---------- PLAYER PANEL
+function openPlayer(key) {
+  hide();
+  const p = byKey[key], isBat = p.role === "bat", n = DATA.roles[p.role].length, gg = gain(p);
+  const [sl] = sure(p.top10), [aw] = avail(p);
+  const [rl] = route(p);
+  const status = rl === "Not available" ? "Not available for 2027" : rl === "Already at RR" ? "Already at RR" : rl === "Auction" ? (p.unsold26 ? "In the auction (unsold in 2026)" : p.released_by ? `In the auction (released by ${team(p.released_by)})` : "In the auction if he registers") : `Retained by ${team(p.team)} for 2027`;
+  const ranks = p.grid.map((s, i) => s == null ? null : 1 + DATA.roles[p.role].filter(o => o.grid[i] != null && o.grid[i] > s).length).filter(x => x != null);
+  const outLine = isBat ? `Out <b>${p.outs}</b> times under pressure, where an average batter would be out <b>${fmt(p.xouts, 0)}</b> times.`
+                        : `Took <b>${p.outs}</b> wickets under pressure, where an average bowler would take <b>${fmt(p.xouts, 0)}</b>.`;
+  const dr = $("#drawer");
+  dr.innerHTML = `<div class="dh"><button class="dclose" aria-label="Close">×</button>
+      <div class="kicker">${isBat ? "Batter" : "Bowler"} #${p.rank} of ${n}${p.tied ? " · tied" : ""}</div>
+      <h3>${esc(p.name)}</h3><div class="meta">${esc(p.nation)} · ${roleWord(p)} · ${esc(status)}</div></div>
+    <div class="db">
+      <div class="inshort">${esc(p.name)} is <b>${level(p.score)}</b>. ${sureText(p.top10)}</div>
+      <div class="big">
+        <div class="bt" data-tt="${A(tipGain(p))}"><div class="k">${isBat ? "Extra runs per 100 pressure balls" : "Runs an over saved under pressure"}${info(isBat ? "vsavg_bat" : "vsavg_bowl")}</div><div class="v">${isBat ? sgn(gg, 0) : Math.abs(gg).toFixed(1)}</div><div class="n">vs an average ${isBat ? "batter" : "bowler"} (${fmt(p.rate, isBat ? 0 : 2)} vs ${fmt(p.xrate, isBat ? 0 : 2)})</div></div>
+        <div class="bt" data-tt="${A(tipDeliv(p))}"><div class="k">Delivered${info("delivered")}</div><div class="v">${delivered(p)} of ${p.pm}</div><div class="n">tense games</div></div>
+        <div class="bt" data-tt="${A(dt("Compared with his usual self", esc(p.name), null, p.lift >= 0 ? `Under pressure he is worth <b>${p.lift.toFixed(1)} more runs per 100 balls</b> than in his normal games: he rises to the occasion.` : `Under pressure he is worth <b>${(-p.lift).toFixed(1)} fewer runs per 100 balls</b> than in his normal games, but his normal level is so high he is still near the top.`))}"><div class="k">vs his usual self${info("usual")}</div><div class="v">${p.lift >= 0 ? "Better" : "Dips"}</div><div class="n">${sgn(p.lift)} runs per 100 balls</div></div>
+        <div class="bt" data-tt="${A(tipSure(p))}"><div class="k">How sure we are${info("sure")}</div><div class="v">${sl}</div><div class="n">top 10 in ${Math.round(p.top10 * 100)}% of versions</div></div>
+      </div>
+      <p class="small" style="margin:0 0 14px;color:var(--ink2)">${outLine}</p>
+      ${p.wins != null ? `<div class="sect fit"><h3>For RR${info("rrfit")}</h3>${p.slot === "top order" ? `RR's openers already deliver under pressure, so he would add little to RR (+${p.wins.toFixed(2)} wins a season).` : `Would take the ${p.slot === "middle / finish" ? "middle-order" : p.slot} pressure balls that went to ${esc(p.replaces)}: <b>+${p.wins.toFixed(2)} wins a season</b>.`} <span class="muted">${aw === "RR" ? "Already at RR." : aw === "Available" ? "Available at the auction." : `${p.route[0] === "Auction" ? "In the 16 December auction pool." : "Currently at " + aw + "."}`}</span></div>` : ""}
+      ${p.moment ? `<div class="sect"><h3>Biggest moment${info("moment")}</h3>${esc(p.moment)}. <b>+${p.moment_swing}% chance of winning.</b></div>` : ""}
+      <div class="sect"><h3>Every tense game${info("strip")}</h3><div class="legend"><span><i style="background:var(--blue)"></i>Delivered</span><span><i style="border:2px solid var(--orange)"></i>Fell short</span></div><div id="dStrip"></div></div>
+      <details class="more sect"><summary>More detail</summary>
+        <p class="small" style="margin:8px 0">Pressure score <b>${sgn(p.score, 2)}</b> · ${p.n_p} pressure balls · ${Math.round(p.ipl_share * 100)}% of them in the IPL · IPL-only rank ${p.ipl_rank ?? "n/a"} · T20I-only rank ${p.t20_rank ?? "n/a"}</p>
+        <h3 style="margin-top:10px">Rank in each of the 288 versions${info("versions")}</h3><div id="dRanks"></div>
+      </details>
+    </div>`;
+  // strip
+  const w = 470, s = svg(w, 56), t0 = +new Date("2022-01-01"), t1 = +new Date("2026-12-31"), x = t => 12 + (t - t0) / (t1 - t0) * (w - 24);
+  for (let y = 2022; y <= 2026; y++) { const tx = x(+new Date(y + "-01-01")); el("line", {x1: tx, x2: tx, y1: 4, y2: 36, stroke: "var(--rule)"}, s); el("text", {x: tx + 4, y: 52}, s, y); }
+  p.strip.forEach((m, i) => {
+    const c = el("circle", {cx: x(+new Date(m[0])), cy: 20 + ((i % 3) - 1) * 7, r: 6, fill: m[1] ? "var(--blue)" : "var(--surface)", stroke: m[1] ? "var(--surface)" : "var(--orange)", "stroke-width": m[1] ? 1.5 : 2}, s);
+    c.dataset.tt = dt(esc(m[2]), new Date(m[0]).toLocaleDateString("en-GB", {day: "numeric", month: "short", year: "numeric"}), null, m[1] ? "<b>Delivered:</b> did better than an average player would have on this game's pressure balls." : "<b>Fell short:</b> did worse than an average player would have on this game's pressure balls.");
+  });
+  $("#dStrip").appendChild(s);
+  // version ranks
+  const maxR = Math.max(20, ...ranks), s2 = svg(w, 62), xr = r => 12 + (r - 1) / (maxR - 1) * (w - 24), cnt = {};
+  ranks.forEach(r => cnt[r] = (cnt[r] || 0) + 1);
+  const cm = Math.max(...Object.values(cnt)), bw = Math.max(3, (w - 24) / maxR - 2);
+  el("rect", {x: xr(1) - 5, y: 4, width: xr(10.5) - xr(1) + 5, height: 34, rx: 5, fill: "var(--pink-soft)"}, s2);
+  for (const r in cnt) { const hh = 4 + cnt[r] / cm * 28; el("rect", {x: xr(+r) - bw / 2, y: 38 - hh, width: bw, height: hh, rx: 2, fill: "var(--blue)"}, s2).dataset.tt = dt(`Rank #${r}`, `in ${cnt[r]} of ${ranks.length} versions`, null, `<b>${Math.round(cnt[r] / ranks.length * 100)}%</b> of versions put him exactly #${r}.`); }
+  el("text", {x: xr(1), y: 54}, s2, "#1"); el("text", {x: xr(10), y: 54, "text-anchor": "middle"}, s2, "#10"); el("text", {x: xr(maxR), y: 54, "text-anchor": "end"}, s2, "#" + maxR);
+  $("#dRanks").appendChild(s2);
+  dr.classList.add("open"); dr.setAttribute("aria-hidden", "false"); $("#dbg").classList.add("open");
+  $(".dclose", dr).onclick = closePlayer; $(".dclose", dr).focus({preventScroll: true});
+}
+function closePlayer() { hide(); $("#drawer").classList.remove("open"); $("#drawer").setAttribute("aria-hidden", "true"); $("#dbg").classList.remove("open"); }
+$("#dbg").onclick = closePlayer;
+document.addEventListener("keydown", e => { if (e.key === "Escape") { hide(); closePlayer(); $("#guide").classList.remove("open"); } });
+
+// ---------- boot
+board(); allTable(); rr(); beyond(); how();
+const qs = new URLSearchParams(location.search);
+if (qs.get("theme")) document.documentElement.dataset.theme = qs.get("theme");
+if (qs.get("role")) { topRole = qs.get("role"); setSeg("#topSeg", topRole); board(); }
+let start = location.hash.slice(1);
+if (!start) { try { start = localStorage.getItem("pri-tab"); } catch (e) {} }
+if (["top", "rr", "beyond", "all", "how"].includes(start)) goTab(start);
+if (qs.get("player")) openPlayer(qs.get("player"));
+if (qs.get("guide")) $("#guide").classList.add("open");
+if (qs.get("tip")) { tt.style.transition = "none"; const t = $(qs.get("tip")); if (t) setTimeout(() => show(t), 300); }
+</script>
+</body>
+</html>

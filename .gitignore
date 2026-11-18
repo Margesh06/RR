@@ -1,0 +1,9 @@
+.venv/
+out/
+out_pk/
+out_grid/
+Data Pack/
+*.pkl
+__pycache__/
+.DS_Store
+MY_VIEW.md
