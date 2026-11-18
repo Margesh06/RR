@@ -418,7 +418,7 @@ S.append(table([["The brief asks for", "Where"],
                 ["Batting and bowling metrics, player baselines, scoring logic", "Section 3"],
                 ["Fair comparisons: sample size, eligibility, contexts, IPL and T20I", "Section 4"],
                 ["Evidence for the top 10 and their order", "Sections 5, 6 and 9 (player cards)"],
-                ["Reliability, consistency across matches, limitations", "Section 7 (eight tests)"],
+                ["Reliability, consistency across matches, limitations", "Section 7 (ten tests)"],
                 ["Reproducibility", "Appendix B and the public code"],
                 ["How each player could strengthen the RR squad", "Section 8 and page 2"]], [100, 78]))
 S.append(PageBreak())
@@ -833,11 +833,11 @@ S.append(P(f"Grey = rank in each of the {N_SPECS} specifications; blue = mean ra
 # ------------------------------------------------------------------ 7. reliability
 S.append(PageBreak())
 S.append(P("7  RELIABILITY AND LIMITATIONS", "kick"))
-S.append(P("Is the ranking signal or noise? We tested it eight ways", "h1"))
+S.append(P("Is the ranking signal or noise? We tested it ten ways", "h1"))
 S.append(P("<b>Test 1: split-half reliability.</b> Matches were randomly split into two halves 40 times; we correlated "
            "each player's metric across halves (Spearman-Brown corrected to the full sample). A metric that cannot "
            "agree with itself cannot rank players."))
-S.append(fig("f3_reliability", 104))
+S.append(fig("f3_reliability", 86))
 S.append(P("Raw pressure run value and raw win-probability added, the usual \"clutch\" statistics, barely agree with "
            f"themselves for batters ({rel_rv_b:.2f} and {rel_wpa_b:.2f}). Component shrinkage toward the player's own baseline lifts "
            f"reliability to {rel_pq_b:.2f} (batters) and {rel_pq_w:.2f} (bowlers).", "small"))
@@ -982,8 +982,40 @@ t8.append(P(f"Values are rank correlations (1 = perfect). <b>The adjusted rating
             "comparisons</b> (the other is a tie), including against the unadjusted target, which the adjustment does not touch. "
             "The gains are small (about 50 players per test), but they all point the same way, and split-half "
             f"reliability rises for bowlers (from {REL_OLD['bowl']:.2f} to {rel_pq_w:.2f}; batters {REL_OLD['bat']:.2f} to "
-            f"{rel_pq_b:.2f}). So we adopted it. <b>What it changed:</b> " + _moves_txt + ".", "small"))
+            f"{rel_pq_b:.2f}; Test 9 checks this without leakage). So we adopted it. <b>What it changed:</b> " + _moves_txt + ".", "small"))
 S.append(KeepTogether(t8))
+# ---- Test 9: leak-free reliability; Test 10: permutation test for Lift
+LF = pd.read_csv(f"{OUT}/leakfree_reliability.csv").set_index(["role", "version"]).reliability
+PM = pd.read_csv(f"{OUT}/permutation_lift.csv").set_index("role")
+_v = ["No ground/opponent adjustment", "Adjustment fitted on all matches", "Adjustment refitted on each half (leak-free)"]
+t9 = [P("<b>Test 9: is the reliability gain real, or leakage?</b> In Test 1 the ground and opponent effects were fitted on all "
+        "matches, so each half has 'seen' the other. Here they are refitted on each random half alone (20 splits).", "p")]
+r9 = [["Pressure Quality, split-half reliability", "Batters", "Bowlers"]]
+for v in _v:
+    lab = "<b>Refitted on each half (leak-free)</b>" if "leak-free" in v else v.replace("No ground", "No ground")
+    f = (lambda x: f"<b>{x:.2f}</b>") if "leak-free" in v else (lambda x: f"{x:.2f}")
+    r9.append([lab, f(LF[("bat", v)]), f(LF[("bowl", v)])])
+t9.append(table(r9, [90, 44, 44]))
+t9.append(Spacer(1, 3))
+t9.append(P(f"For bowlers the gain survives without leakage ({LF[('bowl', _v[0])]:.2f} to {LF[('bowl', _v[2])]:.2f}). For batters "
+            f"the adjustment costs a little consistency ({LF[('bat', _v[0])]:.2f} to {LF[('bat', _v[2])]:.2f}) while predicting "
+            "later seasons better (Test 8): some of what looked like batting skill was easy bowling. We keep the adjustment, "
+            "because predicting the future is the job.", "small"))
+S.append(KeepTogether(t9))
+t10 = [P("<b>Test 10: is 'rising under pressure' a real skill?</b> If Lift (pressure level minus normal level) were pure "
+         "chance, shuffling which of a player's own balls count as 'pressure' would produce the same spread of Lifts as the "
+         f"real data. We shuffled each eligible player's labels {500} times, keeping his number of pressure balls.", "p")]
+r10 = [["Role", "Players", "Real spread of Lift", "Spread if pure chance (95th pct)", "p-value"]]
+for role, lab in (("bat", "Batters"), ("bowl", "Bowlers")):
+    r = PM.loc[role]
+    r10.append([lab, str(int(r.players)), f"{r.observed_sd:.1f}", f"{r.null_mean_sd:.1f} ({r.null_p95_sd:.1f})", f"{r.p_value:.2f}"])
+t10.append(table(r10, [24, 20, 40, 54, 40]))
+t10.append(Spacer(1, 3))
+t10.append(P("Honest reading: with 100-500 pressure balls per player, differences in Lift cannot be told apart from chance "
+             f"(p = {PM.loc['bat', 'p_value']:.2f} batters, {PM.loc['bowl', 'p_value']:.2f} bowlers), as Test 6 also found. So the "
+             "score is led by <b>level under pressure</b> (45%), which is repeatable (Test 1); Lift stays at 20% because the "
+             "brief asks for the comparison with a player's usual level.", "small"))
+S.append(KeepTogether(t10))
 # ---- the questions a sceptical judge will ask, answered from the data
 _E = bowl[bowl.eligible]
 _ps = _E.groupby("pace_spin").pq.mean()
@@ -1011,7 +1043,7 @@ sq += bullets([
     f"far more than pacers (average Pressure Quality {_ps['Spin']:+.1f} vs {_ps['Pace']:+.1f} runs per 100 balls). It is "
     "not a role artefact: the ranking is only weakly tied to death-over share (Test 5).",
     "<b>Did anyone get in by playing weak teams or on slow grounds?</b> We checked by judging every ball against its "
-    "ground and its exact opponent (Test 8). It changed the lists: " + _moves_txt + ". Mujeeb's figures were helped "
+    "ground and its exact opponent: three picks dropped out (Test 8). Mujeeb's figures were helped "
     f"mostly by low-scoring grounds (his pressure balls came at grounds worth {-_ctx_mu['v']:.1f} fewer runs per 100 balls "
     f"than average; {_mu_uae} of his {len(_mu_idx)} came in the UAE), not by weak batting; Santner rose because he bowled "
     "at above-average batters.",
@@ -1028,17 +1060,16 @@ sq += bullets([
 S.append(KeepTogether(sq))
 S.append(P("Where the model is less certain", "h2"))
 S += bullets([
-    "<b>Pressure skill is only partly persistent.</b> Even our best metric has a reliability of about 0.5. Treat ranks "
-    "6-10 as a tier rather than a strict order; the bootstrap intervals overlap.",
+    "<b>Pressure skill is only partly persistent.</b> Our best metric has a reliability of about 0.5 and Lift alone is not "
+    "distinguishable from chance (Test 10). Treat ranks 6-10 as a tier; the bootstrap intervals overlap.",
     "<b>Near the cut-off.</b> Sooryavanshi (119 pressure balls, 15 of them from A-team matches weighted at 0.5) is the "
     "biggest single risk in the lists: much of his score is his normal-situation level. "
     + and_list(list(pd.concat([cons["bat"].head(10), cons["bowl"].head(10)])[lambda d: d.top10_share < 0.6].name))
     + " are top 10 in fewer than 60% of specifications. Bowlers 9 to 11 (Pathirana, Hasaranga, Ferguson) are a "
     "statistical dead heat.",
     "<b>Model and data gaps.</b> The win-probability model that defines pressure ignores team strength, venue and toss "
-    "(first-innings AUC 0.69). The ratings do adjust for ground and opponent, but the pack identifies a ground only by "
-    "an ID, and grounds with few matches stay close to average by design. No fielding data; no T20 World Cups in the "
-    "pack; 2027 auction prices are unknown.",
+    "(first-innings AUC 0.69). Grounds are known only by an ID and rarely-used ones stay near average by design. No "
+    "fielding data or T20 World Cups; 2027 auction prices are unknown.",
 ])
 
 # ------------------------------------------------------------------ 8. RR lens
@@ -1356,7 +1387,7 @@ S.append(table([["Script", "What it does"],
                 ["extras.py, trades.py", "Hidden gems, players who dip under pressure, famous absences, young uncapped; confirmed trades, availability, caps and ages"],
                 ["compare.py, simulate.py, heldout_weights.py, checks.py", "Head-to-head (Test 5), known-answer simulation (Test 6), held-out weights (Test 7), pressure-decile and per-component checks"],
                 ["tier_check.py, rr_impact.py, cards.py", "IPL-only and T20I-only re-ratings; wins added for RR; player-card data"],
-                ["ctx_compare.py, factor_swing.py", "Ground and opponent adjustment vs the same pipeline without it (Test 8); rank swing per modelling choice (Test 4)"],
+                ["ctx_compare.py, factor_swing.py, robust_tests.py", "Ground and opponent adjustment vs none (Test 8); rank swing per choice (Test 4); leak-free reliability and Lift permutation test (Tests 9-10)"],
                 ["stage3_tables.py, stage4_figures.py, stage4b_figures.py, stage5_report.py", "Team profiles, figures, this report"]],
                [52, 126]))
 S.append(Spacer(1, 3))

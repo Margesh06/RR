@@ -13,8 +13,8 @@ their usual level, and ranks the players who deliver most consistently when it m
   normal level), consistency across pressure matches and win impact, with empirical-Bayes shrinkage, averaged over 73
   model specifications.
 - **Checks:** split-half reliability, bootstrap, out-of-time test (2022-24 -> 2025-26), IPL-only / T20I-only re-ratings,
-  a head-to-head test against common approaches, a known-answer simulation, weights chosen on held-out seasons and a
-  test of the ground and opponent adjustment.
+  a head-to-head test against common approaches, a known-answer simulation, weights chosen on held-out seasons, a
+  test of the ground and opponent adjustment, a leak-free reliability check and a permutation test for Lift.
 - **RR lens:** wins added for Rajasthan Royals and an auction board built on the official IPL 2027 retention lists.
 
 ## Data
@@ -32,7 +32,7 @@ The competition data pack is **not** included (it may not be shared). Put its CS
 | `validate.py`, `closers.py`, `compare.py` | Out-of-time test, extreme-pressure chase closers, head-to-head with common approaches |
 | `simulate.py`, `heldout_weights.py`, `checks.py` | Known-answer simulation, weights chosen on held-out seasons, pressure-decile check and per-component reliability |
 | `tier_check.py`, `rr_impact.py`, `cards.py`, `extras.py`, `trades.py` | IPL-only / T20I-only checks, wins added for RR, player cards, beyond-the-top-10 lists, 2027 availability |
-| `ctx_compare.py`, `factor_swing.py` | Ground and opponent adjustment vs the same pipeline without it (Test 8); rank swing per modelling choice (Test 4) |
+| `ctx_compare.py`, `factor_swing.py`, `robust_tests.py` | Ground and opponent adjustment vs the same pipeline without it (Test 8); rank swing per modelling choice (Test 4); leak-free reliability and Lift permutation test (Tests 9-10) |
 | `stage3_tables.py`, `stage4_figures.py`, `stage4b_figures.py`, `stage5_report.py` | Team profiles, figures, the PDF report |
 | `grid_specs.py`, `dashboard_data.py`, `dashboard_template.html` | 288-cell model lab and the interactive dashboard |
 
@@ -76,6 +76,7 @@ while IFS=$'\t' read -r t j; do printf '%s\0%s\0' "$t" "$(echo "$j" | sed 's/}$/
 while IFS=$'\t' read -r t j; do printf '%s\0%s\0' "$t" "$(echo "$j" | sed 's/}$/, "CONTEXT_ADJ": false}/')"; done < out/ensemble_specs.jsonl \
   | OMP_NUM_THREADS=1 xargs -0 -n 2 -P 6 sh -c 'RR_OVERRIDES="$1" .venv/bin/python -I code/stage2_ratings.py "$DATA" out_noctx 2024 "_to2024$0" > /dev/null'
 py code/consensus.py out_noctx && py code/ctx_compare.py out_noctx out && py code/factor_swing.py out
+py code/robust_tests.py "$D" out                  # leak-free reliability and Lift permutation test (Tests 9-10)
 
 # 5. figures and report
 py code/stage4_figures.py out && py code/stage4b_figures.py out

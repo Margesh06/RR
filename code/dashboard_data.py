@@ -83,6 +83,17 @@ for role in ("bat", "bowl"):
         if p["name"] in UNSOLD_2026:
             p["unsold26"] = True
         players.append(p)
+    # closest players RR can buy: same broad role, nearest on the standardised playing profile
+    feats = (["pq", "q_base", "death_share_p", "bat_pos"] if role == "bat" else ["pq", "q_base", "death_share_p", "pp_share_p"])
+    Z = R.loc[pool, feats].astype(float)
+    Z = (Z - Z.mean()) / Z.std()
+    grp = (R.loc[pool, "bat_pos"] <= 3) if role == "bat" else (R.loc[pool, "pace_spin"] == "Spin")
+    buyable = [q for q in pool if q in CU.index and route(R.name[q], R.ipl_2026_team[q])[0] == "Auction"]
+    for p in players:
+        q = p["id"]
+        cand = [c for c in buyable if c != q and grp[c] == grp[q]]
+        dist = ((Z.loc[cand] - Z.loc[q]) ** 2).sum(axis=1).sort_values()
+        p["similar"] = [[int(c), R.name[c], int(C.consensus_rank[c])] for c in dist.index[:3]]
     data["roles"][role] = players
     data.setdefault("n_all", {})[role] = len(CA)
     RA = pd.read_pickle(f"{OUT}/ratings_{role}.pkl")
@@ -135,7 +146,9 @@ sim = pd.read_csv(f"{OUT}/simulation.csv")
 data["sim"] = sim[~sim.scenario.str.startswith("As the data")].round(3).to_dict(orient="records")
 data["ctx"] = dict(rows=pd.read_csv(f"{OUT}/ctx_compare.csv").round(3).to_dict(orient="records"),
                    moves=pd.read_csv(f"{OUT}/ctx_moves.csv").to_dict(orient="records"),
-                   size=pd.read_csv(f"{OUT}/context_summary.csv", index_col=0).value.round(2).to_dict())
+                   size=pd.read_csv(f"{OUT}/context_summary.csv", index_col=0).value.round(2).to_dict(),
+                   leakfree=pd.read_csv(f"{OUT}/leakfree_reliability.csv").round(3).to_dict(orient="records"),
+                   perm=pd.read_csv(f"{OUT}/permutation_lift.csv").round(3).to_dict(orient="records"))
 data["hw"] = pd.read_csv(f"{OUT}/heldout_weights.csv").round(3)[["role", "best_weights", "cv_chosen", "cv_ours", "cv_ours_wins", "top10_overlap"]].to_dict(orient="records")
 with open(DST, "w") as f:
     json.dump(data, f, separators=(",", ":"))
