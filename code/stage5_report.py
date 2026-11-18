@@ -369,10 +369,15 @@ for t, m, e in G:
     rows.append([f"<b>{t}</b>", m, e or ""])
 S.append(table(rows, [30, 88, 60]))
 S.append(Spacer(1, 6))
-S.append(P("How to read the rest of the report: Sections 1-4 explain the method, Sections 5-6 give the evidence for "
-           "each pick, Section 7 tests whether the results are skill or luck, Section 8 turns them into an RR auction "
-           "plan, Section 9 has a one-card summary for every player, and Section 10 looks beyond the top 10 (hidden gems, "
-           "expensive reputations and famous absences).", "small"))
+S.append(P("Where each part of the brief is answered", "h2"))
+S.append(table([["The brief asks for", "Where"],
+                ["Pressure definition, and why it is meaningful", "Section 2 (with proof it tracks real swings in the result)"],
+                ["Batting and bowling metrics, player baselines, scoring logic", "Section 3"],
+                ["Fair comparisons: sample size, eligibility, contexts, IPL and T20I", "Section 4"],
+                ["Evidence for the top 10 and their order", "Sections 5, 6 and 9 (player cards)"],
+                ["Reliability, consistency across matches, limitations", "Section 7 (seven tests)"],
+                ["Reproducibility", "Appendix B and the public code"],
+                ["How each player could strengthen the RR squad", "Section 8 and page 2"]], [100, 78]))
 S.append(PageBreak())
 
 # ------------------------------------------------------------------ 1. approach
@@ -424,11 +429,17 @@ S.append(P("<b>Why this definition is meaningful.</b> (1) It works identically f
            "a chase that is already won or already lost scores near zero. (3) It is continuous and calibrated, so no "
            "arbitrary over cut-offs are needed. (4) It is learned from this data, so it reflects the modern "
            "impact-player scoring environment."))
-S.append(fig("f1_pressure_map", 132))
+CHK = pd.read_csv(f"{OUT}/check_summary.csv", index_col=0).iloc[:, 0]
+DEC = pd.read_csv(f"{OUT}/check_deciles.csv")
+S.append(P(f"<b>Proof that it measures real pressure.</b> Split every ball into ten equal groups by Pressure Index. The actual "
+           f"swing in win probability on the ball rises in every step, from {DEC.swing.iloc[0]:.2f}% in the calmest tenth to "
+           f"{DEC.swing.iloc[-1]:.1f}% in the tensest ({CHK['top_vs_bottom']:.0f} times as much). The {CHK['ball_share_pressure']*100:.0f}% "
+           f"of balls we call pressure carry {CHK['wp_share_pressure']*100:.0f}% of all the win-probability movement in the data.", "p"))
+S.append(fig("f1_pressure_map", 118))
 S.append(P("Figure 1. Mean Pressure Index in chases. Pressure runs along a diagonal ridge where the required rate is "
            "achievable but uncertain. The bottom-left corner (few runs, few balls) and the top-left (impossible asks) both "
            "carry low pressure.", "small"))
-S.append(fig("f2_tiers", 140))
+S.append(fig("f2_tiers", 128))
 S.append(P("Figure 2. The definition separates genuinely different situations. In Extreme-pressure balls (PI 3+) the "
            "league scores 15% faster and loses wickets 52% more often than in Low-pressure balls: the risk-reward trade-off "
            "changes, which is exactly where reliable players separate from the rest.", "small"))
@@ -578,14 +589,11 @@ S.append(P(f"The competition-specific ratings agree closely with the combined on
            "their player cards, as is Sooryavanshi, who has fewer than 100 pressure balls in either competition alone. "
            "Combining the competitions mainly adds sample size, which is why we keep both.", "small"))
 S.append(P("Why level and lift, not lift alone", "h2"))
-S.append(P("The brief asks how players perform under pressure compared with their usual level. We measure that directly as "
-           "Lift (pressure quality minus the player's normal-ball quality, both against the same context expectation). But "
-           "Lift alone is a poor ranking: for bowlers 'pressure minus normal' does not agree with itself across two halves of "
-           "the data (reliability near zero, Test 5), and for batters it mostly rewards finishers. So the score combines "
-           "level under pressure (45%), consistency across matches (20%), Lift (20%) and win impact (15%). A player who is "
-           "elite under pressure but no better than usual can still rank high; a player who dips is penalised. Context "
-           "expectation removes role effects and shrinkage removes luck. In our lists, "
-           "Abhishek Sharma is the one pick who dips (Section 5).", "p"))
+S.append(P("The brief asks how players perform under pressure compared with their usual level. We measure that as Lift "
+           "(pressure quality minus the player's normal-ball quality). But Lift alone ranks badly: for bowlers 'pressure minus "
+           "normal' does not agree with itself across two halves of the data, and for batters it mostly rewards finishers "
+           "(Test 5). So the score combines level under pressure (45%), consistency (20%), Lift (20%) and win impact (15%): "
+           "a dip is penalised, but an elite player is not punished for being elite all the time.", "p"))
 
 # ------------------------------------------------------------------ 5. batters
 S.append(PageBreak())
@@ -710,6 +718,14 @@ S.append(fig("f3_reliability", 104))
 S.append(P("Raw pressure run value and raw win-probability added, the usual \"clutch\" statistics, barely agree with "
            f"themselves for batters ({rel_rv_b:.2f} and {rel_wpa_b:.2f}). Component shrinkage toward the player's own baseline lifts "
            f"reliability to {rel_pq_b:.2f} (batters) and {rel_pq_w:.2f} (bowlers).", "small"))
+CC = pd.read_csv(f"{OUT}/check_components.csv").set_index(["role", "part"]).reliability
+S.append(P("<b>Each part of the score on its own.</b> The level under pressure, as used, is the stable part (batters "
+           f"{CC[('bat', 'Level under pressure (as used)')]:.2f}, bowlers {CC[('bowl', 'Level under pressure (as used)')]:.2f}). "
+           f"Lift and consistency barely repeat on their own (Lift {CC[('bat', 'Lift (as used)')]:.2f} and "
+           f"{CC[('bowl', 'Lift (as used)')]:.2f}; consistency {CC[('bat', 'Consistency (share of tense games won)')]:.2f} and "
+           f"{CC[('bowl', 'Consistency (share of tense games won)')]:.2f}). We keep them because the brief asks for both "
+           "'compared with their usual level' and 'consistently', at 20% each so they adjust the ranking rather than drive "
+           "it; Test 7 shows these weights predict later seasons better than weights tuned on the data.", "small"))
 S.append(P("<b>Test 2: out-of-time prediction.</b> We rebuilt every rating using only 2022-24 data and asked how well it "
            "ranks players' actual pressure performance in 2025-26 (players with 60+ pressure balls in both windows).", "p"))
 tvr = [["Estimator built on 2022-24", "Batters: rank corr. with 2025-26 pressure quality", "Bowlers"]]
@@ -1157,15 +1173,17 @@ S.append(KeepTogether(yb))
 S.append(PageBreak())
 S.append(P("APPENDIX", "kick"))
 S.append(P("A. Win-probability calibration", "h2"))
-S.append(fig("f9_calibration", 72))
+S.append(fig("f9_calibration", 60))
 S.append(P(f"B. Reproducibility: code and run steps at <link href='{CODE_URL}' color='#E4087C'><u>{CODE_URL.replace('https://', '')}</u></link>", "h2"))
+S.append(P("Verified: a fresh copy of the public code, run only with the README steps, rebuilt the full ranking with every "
+           "score identical (largest difference 0.000).", "small"))
 S.append(table([["Script", "What it does"],
                 ["stage1_models.py", "State engine, WP models (CV-validated), expected-runs model, attribution of WPA and run value, Leverage and Pressure Index"],
                 ["stage2_ratings.py", "Expectation models, component shrinkage, PRI, eligibility, split-half reliability, bootstrap. Optional window and parameter overrides for validation and sensitivity runs"],
                 ["ensemble_specs.py, run_ens.sh, consensus.py", "73-specification ensemble and consensus ranking (also re-run on the 2022-24 window)"],
                 ["validate.py, closers.py", "Out-of-time test (2022-24 to 2025-26); extreme-pressure chase closers"],
                 ["extras.py, trades.py", "Hidden gems, players who dip under pressure, famous absences, young uncapped; confirmed trades, availability, caps and ages"],
-                ["compare.py, simulate.py, heldout_weights.py", "Head-to-head with common approaches (Test 5), known-answer simulation (Test 6), held-out weights (Test 7)"],
+                ["compare.py, simulate.py, heldout_weights.py, checks.py", "Head-to-head (Test 5), known-answer simulation (Test 6), held-out weights (Test 7), pressure-decile and per-component checks"],
                 ["tier_check.py, rr_impact.py, cards.py", "IPL-only and T20I-only re-ratings; wins added for RR; player-card data"],
                 ["stage3_tables.py, stage4_figures.py, stage4b_figures.py, stage5_report.py", "Team profiles, figures, this report"]],
                [52, 126]))

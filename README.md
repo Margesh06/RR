@@ -28,7 +28,7 @@ The competition data pack is **not** included (it may not be shared). Put its CS
 | `stage2_ratings.py` | Expectation models, component shrinkage, PRI, eligibility, reliability, bootstrap |
 | `ensemble_specs.py`, `run_ens.sh`, `run_ens24.sh`, `consensus.py` | 73-specification ensemble and consensus ranking; auction-pool ranking |
 | `validate.py`, `closers.py`, `compare.py` | Out-of-time test, extreme-pressure chase closers, head-to-head with common approaches |
-| `simulate.py`, `heldout_weights.py` | Known-answer simulation (players with a known true skill) and weights chosen on held-out seasons |
+| `simulate.py`, `heldout_weights.py`, `checks.py` | Known-answer simulation, weights chosen on held-out seasons, pressure-decile check and per-component reliability |
 | `tier_check.py`, `rr_impact.py`, `cards.py`, `extras.py`, `trades.py` | IPL-only / T20I-only checks, wins added for RR, player cards, beyond-the-top-10 lists, 2027 availability |
 | `stage3_tables.py`, `stage4_figures.py`, `stage4b_figures.py`, `stage5_report.py` | Team profiles, figures, the PDF report |
 | `grid_specs.py`, `dashboard_data.py`, `dashboard_template.html` | 288-cell model lab and the interactive dashboard |
@@ -62,7 +62,7 @@ py code/consensus.py out_pk && cp out_pk/consensus_bat.csv out/consensus_bat_inc
 RR_OVERRIDES='{"TIER_KEEP": ["IPL"]}'  py code/stage2_ratings.py "$D" out 9999 _ipl
 RR_OVERRIDES='{"TIER_KEEP": ["T20I"]}' py code/stage2_ratings.py "$D" out 9999 _t20i
 py code/stage3_tables.py "$D" out && py code/detail.py
-py code/tier_check.py out && py code/compare.py out && py code/simulate.py out && py code/heldout_weights.py out && py code/rr_impact.py out && py code/cards.py "$D" out && py code/extras.py out
+py code/tier_check.py out && py code/compare.py out && py code/simulate.py out && py code/heldout_weights.py out && py code/checks.py out && py code/rr_impact.py out && py code/cards.py "$D" out && py code/extras.py out
 
 # 5. figures and report
 py code/stage4_figures.py out && py code/stage4b_figures.py out
