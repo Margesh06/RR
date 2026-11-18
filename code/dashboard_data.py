@@ -131,6 +131,9 @@ data["rr27"] = dict(purse=RR_PURSE, slots=RR_SLOTS, overseas=RR_OVERSEAS_SLOTS,
                          "Mujeeb Ur Rahman": "unsold at the 2026 auction", "Mark Adair": "has never played in the IPL"})
 data["young"] = clean(to27(pd.read_csv(f"{OUT}/extra_young.csv")), ["role", "name", "age", "team", "released_by", "style", "n_p", "matches", "rate", "xrate", "outs", "xouts"])
 data["compare"] = pd.read_csv(f"{OUT}/compare_methods.csv").round(2).to_dict(orient="records")
+sim = pd.read_csv(f"{OUT}/simulation.csv")
+data["sim"] = sim[~sim.scenario.str.startswith("As the data")].round(3).to_dict(orient="records")
+data["hw"] = pd.read_csv(f"{OUT}/heldout_weights.csv").round(3)[["role", "best_weights", "cv_chosen", "cv_ours", "cv_ours_wins", "top10_overlap"]].to_dict(orient="records")
 with open(DST, "w") as f:
     json.dump(data, f, separators=(",", ":"))
 print("players:", {k: len(v) for k, v in data["roles"].items()}, "bytes:", len(json.dumps(data, separators=(",", ":"))))

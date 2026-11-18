@@ -12,7 +12,7 @@ their usual level, and ranks the players who deliver most consistently when it m
   normal level), consistency across pressure matches and win impact, with empirical-Bayes shrinkage, averaged over 73
   model specifications.
 - **Checks:** split-half reliability, bootstrap, out-of-time test (2022-24 -> 2025-26), IPL-only / T20I-only re-ratings,
-  and a head-to-head test against common approaches.
+  a head-to-head test against common approaches, a known-answer simulation and weights chosen on held-out seasons.
 - **RR lens:** wins added for Rajasthan Royals and an auction board built on the official IPL 2027 retention lists.
 
 ## Data
@@ -28,6 +28,7 @@ The competition data pack is **not** included (it may not be shared). Put its CS
 | `stage2_ratings.py` | Expectation models, component shrinkage, PRI, eligibility, reliability, bootstrap |
 | `ensemble_specs.py`, `run_ens.sh`, `run_ens24.sh`, `consensus.py` | 73-specification ensemble and consensus ranking; auction-pool ranking |
 | `validate.py`, `closers.py`, `compare.py` | Out-of-time test, extreme-pressure chase closers, head-to-head with common approaches |
+| `simulate.py`, `heldout_weights.py` | Known-answer simulation (players with a known true skill) and weights chosen on held-out seasons |
 | `tier_check.py`, `rr_impact.py`, `cards.py`, `extras.py`, `trades.py` | IPL-only / T20I-only checks, wins added for RR, player cards, beyond-the-top-10 lists, 2027 availability |
 | `stage3_tables.py`, `stage4_figures.py`, `stage4b_figures.py`, `stage5_report.py` | Team profiles, figures, the PDF report |
 | `grid_specs.py`, `dashboard_data.py`, `dashboard_template.html` | 288-cell model lab and the interactive dashboard |
@@ -61,7 +62,7 @@ $PY code/consensus.py out_pk && cp out_pk/consensus_bat.csv out/consensus_bat_in
 RR_OVERRIDES='{"TIER_KEEP": ["IPL"]}'  $PY code/stage2_ratings.py "$D" out 9999 _ipl
 RR_OVERRIDES='{"TIER_KEEP": ["T20I"]}' $PY code/stage2_ratings.py "$D" out 9999 _t20i
 $PY code/stage3_tables.py "$D" out && $PY code/detail.py
-$PY code/tier_check.py out && $PY code/compare.py out && $PY code/rr_impact.py out && $PY code/cards.py "$D" out && $PY code/extras.py out
+$PY code/tier_check.py out && $PY code/compare.py out && $PY code/simulate.py out && $PY code/heldout_weights.py out && $PY code/rr_impact.py out && $PY code/cards.py "$D" out && $PY code/extras.py out
 
 # 5. figures and report
 $PY code/stage4_figures.py out && $PY code/stage4b_figures.py out

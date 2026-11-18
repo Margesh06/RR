@@ -442,6 +442,15 @@ footer { color: var(--muted); font-size: 12.5px; text-align: center; padding: 0 
       <p class="small" style="margin:10px 0 0"><b>In plain words:</b> the usual "compared with his normal level" approach is pure noise for bowlers and mostly rewards finishers for batters. Ours is the only one that makes that comparison while staying reliable and fair. Plain economy looks stable for bowlers mainly because it punishes anyone who bowls at the death.</p>
     </div>
     <div class="card">
+      <h2>Two more checks: a known-answer test and data-chosen weights<button class="info" type="button" data-g="sim" aria-label="About the known-answer test">i</button></h2>
+      <p class="lead">We made up players whose true pressure skill we knew, on the real match situations, and checked which method finds them. Then we let the data choose the score's weights and tested them on players it had not seen.</p>
+      <div>
+        <div><h3>Known-answer test: how close each method gets to the truth</h3><div class="tablewrap" style="border:0"><table id="simT"></table></div></div>
+        <div style="margin-top:18px"><h3>Our weights vs weights chosen by the data<button class="info" type="button" data-g="hw" aria-label="About the weights test">i</button></h3><div class="tablewrap" style="border:0"><table id="hwT"></table></div></div>
+      </div>
+      <p class="small" style="margin:10px 0 0"><b>In plain words:</b> our method finds the true pressure performers better than the usual approaches in every scenario. Weights tuned by the data looked better only on the players they were tuned on; on new players our weights predict better.</p>
+    </div>
+    <div class="card">
       <h2>Try it yourself: change our settings<button class="info" type="button" data-g="lab" aria-label="About the settings">i</button></h2>
       <p class="lead">Every analysis has judgement calls. Change any of them and see whether our top 10 survives.</p>
       <div class="controls">
@@ -552,6 +561,8 @@ const G = {
   dip: ["Pressure reputation", "These players are very good in normal games, but are clearly worse under pressure than their own normal level. Paying extra for their 'big-match' reputation would be overpaying.", null, null],
   famous: ["Why not in the top 10?", "Each well-known name with the main reason from the data: just outside, about average under pressure, slower than an average player in the same spots, or a drop under pressure.", null, null],
   route: ["Route to RR", "How RR could sign him for 2027, from the official retention lists. Auction = he can be bought on 16 Dec. Retained = his team kept him, so only a trade could move him. Already at RR = keep.", "The rankings show who performs best under pressure; this shows who RR can actually get.", null],
+  sim: ["Known-answer test", "Each player keeps his real balls and situations, but we set his true skill and simulate every ball as truth plus realistic noise, 200 times. Numbers show how closely each method's ranking matches the truth (1 = perfect).", "'Pressure minus normal' scores near 0: it cannot find the truth even when we know it is there.", "Higher is better"],
+  hw: ["Data-chosen weights", "We tried all 1,771 ways of weighting the four parts of the score on 2022-24 data, picking the best on half the players and testing it on the other half, 1,000 times. Our hand-set weights predicted 2025-26 better on the unseen half.", null, "Higher is better"],
   h2h: ["Head-to-head test", "Skill, not luck = does the measure agree with itself across two random halves of a player's games (higher is better). Predicts next seasons = built on 2022-24, how well it ranks 2025-26 pressure performance (higher is better). Role bias = how much the ranking just follows how often a player bats or bowls at the death (lower is fairer).", null, null],
   young: ["Young and uncapped", "Uncapped = has never played for India's senior team in any format. Ages and cap status were checked against public records (17 Nov 2026). With so few tense games, these numbers can change quickly.", null, null],
   closegames: ["Close game", "One of the tensest third of IPL matches in 2025-26: the match reached a pressure level of 8 or more, so the result was genuinely in doubt late on.", null, null],
@@ -818,6 +829,11 @@ function how() {
   const nm = {"Common: death overs / high required rate + raw strike rate": "Death overs + raw strike rate", "Common: same pressure, strike rate under pressure minus normal": "Pressure minus normal strike rate",
     "Common: death overs / high required rate + raw economy": "Death overs + raw economy", "Common: same pressure, economy under pressure minus normal": "Pressure minus normal economy",
     "Ours: win-probability pressure + context-adjusted, shrunk rating": "Ours"};
+  const SN = {"No pressure skill": "No pressure skill", "Half of normal skill": "Pressure skill = half of normal skill", "Equal to normal skill": "Pressure skill = normal skill"};
+  $("#simT").innerHTML = `<thead><tr><th>Scenario</th><th>Players</th><th class="num">Raw pressure average</th><th class="num">Pressure minus normal</th><th class="num">Ours</th></tr></thead><tbody>` +
+    DATA.sim.map(r => `<tr style="cursor:default"><td>${SN[r.scenario]}</td><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${r.raw.toFixed(2)}</td><td class="num">${r.minus.toFixed(2)}</td><td class="num" style="background:var(--blue-soft)"><b>${r.ours.toFixed(2)}</b></td></tr>`).join("") + `</tbody>`;
+  $("#hwT").innerHTML = `<thead><tr><th>Players</th><th class="num">Data-chosen weights</th><th class="num">Our weights</th><th class="num">Ours as good or better</th></tr></thead><tbody>` +
+    DATA.hw.map(r => `<tr style="cursor:default"><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${r.cv_chosen.toFixed(2)}</td><td class="num" style="background:var(--blue-soft)"><b>${r.cv_ours.toFixed(2)}</b></td><td class="num">${Math.round(r.cv_ours_wins * 100)}% of tests</td></tr>`).join("") + `</tbody>`;
   $("#h2h").innerHTML = `<thead><tr><th>Method</th><th>Players</th><th class="num">Skill, not luck</th><th class="num">Predicts next seasons</th><th class="num">Role bias (lower = fairer)</th></tr></thead><tbody>` +
     DATA.compare.map(r => `<tr style="cursor:default${r.method.startsWith("Ours") ? ";background:var(--blue-soft)" : ""}"><td>${r.method.startsWith("Ours") ? "<b>Ours</b>" : nm[r.method]}</td><td>${r.role === "bat" ? "Batters" : "Bowlers"}</td><td class="num">${r.reliability.toFixed(2)}</td><td class="num">${(r.next_seasons >= 0 ? "+" : "") + r.next_seasons.toFixed(2)}</td><td class="num">${r.role_bias.toFixed(2)}</td></tr>`).join("") + `</tbody>`;
   lab();

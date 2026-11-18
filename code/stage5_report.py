@@ -702,7 +702,7 @@ S.append(P(f"Grey = rank in each of the {N_SPECS} specifications; blue = mean ra
 # ------------------------------------------------------------------ 7. reliability
 S.append(PageBreak())
 S.append(P("7  RELIABILITY AND LIMITATIONS", "kick"))
-S.append(P("Is the ranking signal or noise? We tested it five ways", "h1"))
+S.append(P("Is the ranking signal or noise? We tested it seven ways", "h1"))
 S.append(P("<b>Test 1: split-half reliability.</b> Matches were randomly split into two halves 40 times; we correlated "
            "each player's metric across halves (Spearman-Brown corrected to the full sample). A metric that cannot "
            "agree with itself cannot rank players."))
@@ -781,6 +781,48 @@ t5.append(P("Role bias = how strongly a ranking simply follows the share of a pl
            "only one of the three that answers 'compared with their usual level' while staying reliable and fair. With about "
            "50 players per test, prediction differences under about 0.15 are within noise.", "small"))
 S.append(KeepTogether(t5))
+# ---- Test 6: known-answer simulation
+sim = pd.read_csv(f"{OUT}/simulation.csv")
+sim = sim[~sim.scenario.str.startswith("As the data")]
+t6 = [P("<b>Test 6: a known-answer test.</b> We simulated players whose true pressure skill we set ourselves. Every "
+        "eligible player keeps his real deliveries (same matches, same pressure balls); we give him a true normal level and "
+        "a true pressure lift, simulate each ball as truth plus noise drawn from the real per-ball variation, re-rate "
+        "everyone and check which method finds the truth. 200 runs per scenario.", "p")]
+sr = [["True pressure skill", "Role", "Raw pressure average", "Pressure minus normal", "<b>Ours</b>", "True top 10 found (raw / ours)", "80% range holds the truth"]]
+for r in sim.itertuples():
+    sr.append([{"No pressure skill": "None", "Half of normal skill": "Half of normal skill",
+                "Equal to normal skill": "Equal to normal skill"}[r.scenario], "Batters" if r.role == "bat" else "Bowlers",
+               f"{r.raw:.2f}", f"{r.minus:.2f}", f"<b>{r.ours:.2f}</b>", f"{r.top10_raw:.1f} / <b>{r.top10_ours:.1f}</b>",
+               f"{r.coverage80*100:.0f}%"])
+t6.append(table(sr, [34, 18, 26, 26, 16, 34, 24]))
+t6.append(Spacer(1, 3))
+t6.append(P("Values are rank correlations with the true pressure quality (1 = perfect). <b>Ours recovers the truth best in every "
+            "scenario, for batters and bowlers</b>; 'pressure minus normal' is close to useless, as Test 5 found on the real "
+            "data. Our 80% ranges are cautious (they hold the truth 84-99% of the time). Even a perfect method finds only "
+            "about three of the true top 10, because pressure samples are small: this is why ranks 6-10 are a tier, not an "
+            "exact order. The real data's own variation implies pressure-specific skill close to zero, matching Test 2.", "small"))
+S.append(KeepTogether(t6))
+# ---- Test 7: weights chosen on held-out seasons
+hw = pd.read_csv(f"{OUT}/heldout_weights.csv").set_index("role")
+t7 = [P("<b>Test 7: are our weights any good?</b> The score's weights (45% pressure quality, 20% consistency, 20% Lift, "
+        "15% win impact) were set by hand to match the brief. We let the data choose instead: every weighting on a 5% grid "
+        "(1,771 options) was built on 2022-24 and scored on how well it ranks the same players in 2025-26. Picking the "
+        "best of 1,771 options on about 50 players flatters the winner, so the fair test chooses the weights on a random "
+        "half of the players and scores them on the other half, 1,000 times.", "p")]
+wr = [["Role", "Data's best weights (in sample)", "Cross-validated: data-chosen weights", "Cross-validated: <b>our weights</b>", "Ours as good or better", "Top 10 kept"]]
+for role, lab in (("bat", "Batters"), ("bowl", "Bowlers")):
+    r = hw.loc[role]
+    wr.append([lab, r.best_weights, f"{r.cv_chosen:.2f}", f"<b>{r.cv_ours:.2f}</b>", f"{r.cv_ours_wins*100:.0f}% of splits",
+               f"{int(r.top10_overlap)} of 10"])
+t7.append(table(wr, [18, 34, 36, 34, 28, 22]))
+t7.append(Spacer(1, 3))
+t7.append(P(f"<b>On new players our fixed weights predict better than data-chosen ones</b> ({hw.loc['bat', 'cv_ours']:.2f} vs "
+            f"{hw.loc['bat', 'cv_chosen']:.2f} for batters, {hw.loc['bowl', 'cv_ours']:.2f} vs {hw.loc['bowl', 'cv_chosen']:.2f} "
+            f"for bowlers): tuned weights only look better on the players they were tuned on. For bowlers the data's own best "
+            f"weighting ({hw.loc['bowl', 'best_weights']}) is close to ours. For batters it puts everything on win impact, "
+            "which ignores the brief's 'compared with their usual level'; applying it would keep "
+            f"{int(hw.loc['bat', 'top10_overlap'])} of our 10 batters. We keep the brief-driven weights.", "small"))
+S.append(KeepTogether(t7))
 # ---- the questions a sceptical judge will ask, answered from the data
 _E = bowl[bowl.eligible]
 _ps = _E.groupby("pace_spin").pq.mean()
@@ -1123,7 +1165,7 @@ S.append(table([["Script", "What it does"],
                 ["ensemble_specs.py, run_ens.sh, consensus.py", "73-specification ensemble and consensus ranking (also re-run on the 2022-24 window)"],
                 ["validate.py, closers.py", "Out-of-time test (2022-24 to 2025-26); extreme-pressure chase closers"],
                 ["extras.py, trades.py", "Hidden gems, players who dip under pressure, famous absences, young uncapped; confirmed trades, availability, caps and ages"],
-                ["compare.py", "Head-to-head test against the common approaches (Test 5)"],
+                ["compare.py, simulate.py, heldout_weights.py", "Head-to-head with common approaches (Test 5), known-answer simulation (Test 6), held-out weights (Test 7)"],
                 ["tier_check.py, rr_impact.py, cards.py", "IPL-only and T20I-only re-ratings; wins added for RR; player-card data"],
                 ["stage3_tables.py, stage4_figures.py, stage4b_figures.py, stage5_report.py", "Team profiles, figures, this report"]],
                [52, 126]))
