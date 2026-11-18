@@ -874,7 +874,7 @@ S.append(P(f"<b>Plan 1 adds about +{free_trio.wins.round(2).sum():.2f} wins a se
            "Keep: Sooryavanshi (#2) and Jaiswal (#4). Use carefully: Sandeep Sharma, Ravi Bishnoi and Shami in lower-leverage overs. "
            "Watch list: M Shahrukh Khan, an uncapped finisher released by GT, whose small sample would rank about #15 "
            "(Section 10).", "small"))
-S.append(P("Not available: Harry Brook (joint-10th on performance) is banned from the IPL until the 2028 auction. Tim David, "
+S.append(P("Not available: Harry Brook (#11, level for 10th on performance) is banned from the IPL until the 2028 auction. Tim David, "
            "Hazlewood, Narine, Krunal, Kuldeep and Varun were all retained, so only a trade could bring them to RR.", "small"))
 
 # ---- can RR actually get them?
@@ -950,7 +950,7 @@ def card(c):
         fit = (f"Takes the {c.slot} pressure balls of {c.replaces}: <b>+{c.wins:.2f} wins a season</b> "
                f"(80% range {max(c.wins_lo, 0):.2f}-{c.wins_hi:.2f}).")
     lines = [
-        f"<font color='#52514e'>{c['style']}  ·  {c.n_p} pressure balls, {c.p_matches} matches  ·  "
+        f"<font color='#52514e'>{c['style'].replace('Chinaman', 'wrist spin')}  ·  {c.n_p} pressure balls, {c.p_matches} matches  ·  "
         f"{c.death*100:.0f}% at the death</font>",
         key,
         f"Beat expectation in <b>{c.n_succ} of {c.p_matches}</b> pressure matches  ·  lift {c.lift:+.1f}  ·  "
